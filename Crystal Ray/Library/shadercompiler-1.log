@@ -1,0 +1,61 @@
+Base path: C:/Program Files (x86)/Unity/Editor/Data
+Pipe name: \\.\pipe\UnityShaderCompiler-1-7620
+Cmd: getPlatforms
+Cmd: preprocess
+  insize=2450 outsize=789 ok=1
+Cmd: preprocess
+  insize=877 outsize=325 ok=1
+Cmd: preprocess
+  insize=5268 outsize=854 ok=1
+Cmd: preprocess
+  insize=671 outsize=379 ok=1
+Cmd: preprocess
+  insize=761 outsize=368 ok=1
+Cmd: preprocess
+  insize=1588 outsize=501 ok=1
+Cmd: preprocess
+  insize=1799 outsize=558 ok=1
+Cmd: preprocess
+  insize=3420 outsize=808 ok=1
+Cmd: preprocess
+  insize=735 outsize=353 ok=1
+Cmd: preprocess
+  insize=2377 outsize=467 ok=1
+Cmd: preprocess
+  insize=1300 outsize=465 ok=1
+Cmd: preprocess
+  insize=1176 outsize=447 ok=1
+Cmd: preprocess
+  insize=1234 outsize=431 ok=1
+Cmd: preprocess
+  insize=962 outsize=367 ok=1
+Cmd: preprocess
+  insize=1039 outsize=536 ok=1
+Cmd: preprocess
+  insize=657 outsize=319 ok=1
+Cmd: preprocess
+  insize=1335 outsize=506 ok=1
+Cmd: preprocess
+  insize=1794 outsize=577 ok=1
+Cmd: preprocess
+  insize=685 outsize=340 ok=1
+Cmd: preprocess
+  insize=937 outsize=463 ok=1
+Cmd: preprocess
+  insize=912 outsize=473 ok=1
+Cmd: preprocess
+  insize=1046 outsize=417 ok=1
+Cmd: preprocess
+  insize=1583 outsize=599 ok=1
+Cmd: preprocess
+  insize=936 outsize=381 ok=1
+Cmd: preprocess
+  insize=9293 outsize=2802 ok=1
+Cmd: preprocess
+  insize=627 outsize=321 ok=1
+Cmd: preprocess
+  insize=1725 outsize=1007 ok=1
+Cmd: preprocess
+  insize=1139 outsize=535 ok=1
+Cmd: preprocess
+  insize=2190 outsize=724 ok=1

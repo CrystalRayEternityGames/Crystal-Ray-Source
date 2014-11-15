@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: dcbb89155101bfb4abc328bd945b5a5a
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - mouseOver: {instanceID: 0}
+  - gameFont: {instanceID: 0}
+  - textMaterial: {instanceID: 0}
+  - blue_crystal_01: {fileID: 2100000, guid: 214f3f4d85f357e4eb7b2eda2983387a, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

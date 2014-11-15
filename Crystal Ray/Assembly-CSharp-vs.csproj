@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{1DDA2382-963C-E5F0-82CB-AF601980B642}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_4_5_5;UNITY_4_5;UNITY_64;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN;UNITY_PRO_LICENSE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\Colorful\Components\CC_AnalogTV.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Base.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_BleachBypass.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Blend.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_BrightnessContrastGamma.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_ChannelMixer.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_ContrastVignette.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Convolution3x3.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_CrossStitch.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_DoubleVision.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_FastVignette.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Frost.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_GradientRamp.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Grayscale.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Halftone.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_HueSaturationValue.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Led.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Levels.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_LookupFilter.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Negative.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_PhotoFilter.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Pixelate.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Posterize.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_RGBSplit.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_RadialBlur.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Sharpen.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Threshold.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Vibrance.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Vintage.cs" />
+     <Compile Include="Assets\Colorful\Components\CC_Wiggle.cs" />
+     <Compile Include="Assets\Facebook\Scripts\AndroidFacebook.cs" />
+     <Compile Include="Assets\Facebook\Scripts\AndroidFacebookLoader.cs" />
+     <Compile Include="Assets\Facebook\Scripts\CanvasFacebookLoader.cs" />
+     <Compile Include="Assets\Facebook\Scripts\EditorFacebook.cs" />
+     <Compile Include="Assets\Facebook\Scripts\EditorFacebookAccessToken.cs" />
+     <Compile Include="Assets\Facebook\Scripts\EditorFacebookLoader.cs" />
+     <Compile Include="Assets\Facebook\Scripts\FB.cs" />
+     <Compile Include="Assets\Facebook\Scripts\FBAppRequestsFilterGroup.cs" />
+     <Compile Include="Assets\Facebook\Scripts\FBScreen.cs" />
+     <Compile Include="Assets\Facebook\Scripts\FBSettings.cs" />
+     <Compile Include="Assets\Facebook\Scripts\IOSFacebook.cs" />
+     <Compile Include="Assets\Facebook\Scripts\IOSFacebookLoader.cs" />
+     <Compile Include="Assets\Facebook\Scripts\NativeDialogModes.cs" />
+     <Compile Include="Assets\Scripts\EventManager.cs" />
+     <Compile Include="Assets\Scripts\MusicPlayer.cs" />
+     <Compile Include="Assets\Scripts\backToMain.cs" />
+     <Compile Include="Assets\Scripts\background.cs" />
+     <Compile Include="Assets\Scripts\crystal.cs" />
+     <Compile Include="Assets\Scripts\endlessModeScript.cs" />
+     <Compile Include="Assets\Scripts\gameVariables.cs" />
+     <Compile Include="Assets\Scripts\leftArrow.cs" />
+     <Compile Include="Assets\Scripts\mainMenu.cs" />
+     <Compile Include="Assets\Scripts\pathCreation.cs" />
+     <Compile Include="Assets\Scripts\popupBack.cs" />
+     <Compile Include="Assets\Scripts\popupMenu.cs" />
+     <Compile Include="Assets\Scripts\restart.cs" />
+     <Compile Include="Assets\Scripts\rightArrow.cs" />
+     <Compile Include="Assets\Scripts\score.cs" />
+     <Compile Include="Assets\Scripts\transition.cs" />
+     <Compile Include="Assets\Scripts\tutorial.cs" />
+     <None Include="Assets\Colorful\Shaders\CC_Convolution3x3.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Frost.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Threshold.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Wiggle.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Sharpen.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Blend.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_CrossStitch.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Grayscale.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_ContrastVignette.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Led.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Levels.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_BleachBypass.shader" />
+     <None Include="Assets\Colorful\Shaders\Colorful.cginc" />
+     <None Include="Assets\Colorful\Shaders\CC_RadialBlur.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_DoubleVision.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_AnalogTV.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Vibrance.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_BrightnessContrastGamma.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Posterize.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_HueSaturationValue.shader" />
+     <None Include="Assets\Colorful\Changelog.txt" />
+     <None Include="Assets\Colorful\Readme.txt" />
+     <None Include="Assets\Colorful\Shaders\CC_ChannelMixer.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_FastVignette.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Pixelate.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_GradientRamp.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_PhotoFilter.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_LookupFilter.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Halftone.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_RGBSplit.shader" />
+     <None Include="Assets\Colorful\Shaders\CC_Negative.shader" />
+ <Reference Include="IFacebook">
+ <HintPath>C:/Users/Grant/Dropbox/Crystal Ray/Assets/Facebook/Scripts/IFacebook.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>
