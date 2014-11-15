@@ -89,6 +89,7 @@
      <Compile Include="Assets\Facebook\Scripts\IOSFacebook.cs" />
      <Compile Include="Assets\Facebook\Scripts\IOSFacebookLoader.cs" />
      <Compile Include="Assets\Facebook\Scripts\NativeDialogModes.cs" />
+     <Compile Include="Assets\Scripts\AssetManager.cs" />
      <Compile Include="Assets\Scripts\EventManager.cs" />
      <Compile Include="Assets\Scripts\MusicPlayer.cs" />
      <Compile Include="Assets\Scripts\backToMain.cs" />
@@ -138,7 +139,7 @@
      <None Include="Assets\Colorful\Shaders\CC_RGBSplit.shader" />
      <None Include="Assets\Colorful\Shaders\CC_Negative.shader" />
  <Reference Include="IFacebook">
- <HintPath>C:/Users/Grant/Dropbox/Crystal Ray/Assets/Facebook/Scripts/IFacebook.dll</HintPath>
+ <HintPath>C:/Users/Grant/Documents/GitHub/Source/Crystal Ray/Assets/Facebook/Scripts/IFacebook.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

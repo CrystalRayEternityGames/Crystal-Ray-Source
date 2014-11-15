@@ -26,8 +26,6 @@ namespace AssemblyCSharp
 			Color.gray, //Dark grey
 			Color.cyan, Color.green, Color.red, Color.magenta, Color.yellow,
 			new Color(255,165,0)}; //Orange
-
-
 		#endregion
 
 		#region Private Methods
@@ -41,8 +39,6 @@ namespace AssemblyCSharp
 
 			//Want in, but need it to be changed.
 			crystalRotation = new Vector3(Random.Range (0.2f, 0.4f), Random.Range (0.1f, 0.3f), Random.Range (0.05f, 0.2f));
-
-
 			//type = 1;
 		}
 
@@ -55,11 +51,12 @@ namespace AssemblyCSharp
 			nameId = id;
 			position = nPos;
 			scale = nScale;
-			
-			model = Resources.Load("Crystals/Prefabs/01_crystal") as GameObject;
-			mat = Resources.Load("Crystals/Materials/Crystal01-Grey", typeof(Material)) as Material;
 
-			model.renderer.material = mat;
+            //Grants Change here
+            model = AssetManager.GetModels[0];//Resources.Load("Crystals/Prefabs/01_crystal") as GameObject;
+            mat = Resources.Load("Crystals/Materials/Crystal01-Grey", typeof(Material)) as Material;
+			
+            model.renderer.material = mat;
 			tesseract = Instantiate(model) as GameObject;
 			tesseract.name = "crystal:"+nameId;
 

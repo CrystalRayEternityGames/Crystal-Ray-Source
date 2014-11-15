@@ -61,8 +61,11 @@ public class pathCreation : MonoBehaviour
 
 	/// <summary>
 	/// Creates the field.
-	/// </summary>
-	protected void CreateField ()
+    /// </summary>
+    #if NET_VERSION_4_5
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    #endif
+    protected void CreateField ()
 	{
 		float screenWidth = (float)Screen.width;
 		float screenHeight = (float)Screen.height;
@@ -134,7 +137,10 @@ public class pathCreation : MonoBehaviour
 			continue;
 	}
 
-	public bool generatePath()
+    #if NET_VERSION_4_5
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    #endif
+    public bool generatePath()
 	{
 		//Let's make a path!
 		//Length of path to travel

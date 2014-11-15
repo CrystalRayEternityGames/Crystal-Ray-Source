@@ -97,6 +97,7 @@
     <Compile Include="Assets\Facebook\Scripts\IOSFacebook.cs" />
     <Compile Include="Assets\Facebook\Scripts\IOSFacebookLoader.cs" />
     <Compile Include="Assets\Facebook\Scripts\NativeDialogModes.cs" />
+    <Compile Include="Assets\Scripts\AssetManager.cs" />
     <Compile Include="Assets\Scripts\EventManager.cs" />
     <Compile Include="Assets\Scripts\MusicPlayer.cs" />
     <Compile Include="Assets\Scripts\backToMain.cs" />
