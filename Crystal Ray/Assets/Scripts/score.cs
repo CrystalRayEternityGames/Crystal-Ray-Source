@@ -44,7 +44,7 @@ public class score : MonoBehaviour {
 		playerScore.GetComponent<TextMesh>().fontSize = 100;
 		playerScore.GetComponent<TextMesh>().alignment = TextAlignment.Left;
 		playerScore.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
-		playerScore.renderer.material = textMaterial;
+		playerScore.GetComponent<Renderer>().material = textMaterial;
 		playerScore.transform.position = new Vector3(Screen.width / Screen.height * 16 / 9 - 6.5f, (Screen.width / Screen.height) + 4.7f, 0);//(Screen.width/16/9) * 2f,(Screen.height/16/9) * 2.7f,0f);
 		playerScore.transform.localScale = generalSizing;
 
@@ -53,7 +53,7 @@ public class score : MonoBehaviour {
 		highScore.GetComponent<TextMesh>().fontSize = 100;
 		highScore.GetComponent<TextMesh>().alignment = TextAlignment.Left;
 		highScore.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
-		highScore.renderer.material = textMaterial;
+		highScore.GetComponent<Renderer>().material = textMaterial;
 		highScore.transform.position = new Vector3(Screen.width / Screen.height * 16 / 9 - 6.5f, (Screen.width / Screen.height) + 5.2f, 0);//(Screen.width/16/9) * 2f,(Screen.height/16/9) * 3f,0f);
 		highScore.transform.localScale = generalSizing;
 	}

@@ -19,12 +19,12 @@ public class mainMenu : MonoBehaviour {
 	//Mouse Enters a Box Collider
 	void OnMouseEnter()
 	{
-		renderer.material.color = Color.cyan;
+		GetComponent<Renderer>().material.color = Color.cyan;
 	}
 	//Mouse Leaves a Box Collider
 	void OnMouseExit()
 	{
-		renderer.material.color = Color.white;
+		GetComponent<Renderer>().material.color = Color.white;
 	}
 	//Mouse Clicks a Box Collider
 	void OnMouseDown()
@@ -32,30 +32,30 @@ public class mainMenu : MonoBehaviour {
 		//Start Game
 		if(startGame)
 		{
-			audio.PlayOneShot(menuSelect);
+			GetComponent<AudioSource>().PlayOneShot(menuSelect);
 			Application.LoadLevel("gameWorld");
 		}
         else if (endlessMode)
         {
-            audio.PlayOneShot(menuSelect);
+            GetComponent<AudioSource>().PlayOneShot(menuSelect);
             Application.LoadLevel("endlessMode");
         }
         //Tutorial
         else if (tutorial)
         {
-            audio.PlayOneShot(menuSelect);
+            GetComponent<AudioSource>().PlayOneShot(menuSelect);
             Application.LoadLevel("tutorial");
         }
         //Credits
         else if (credits)
         {
-            audio.PlayOneShot(menuSelect);
+            GetComponent<AudioSource>().PlayOneShot(menuSelect);
             Application.LoadLevel("credits");
         }
         //End
         else if (end)
         {
-            audio.PlayOneShot(menuSelect);
+            GetComponent<AudioSource>().PlayOneShot(menuSelect);
             Application.Quit();
         }
 	}

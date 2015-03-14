@@ -20,8 +20,8 @@ public class CC_CrossStitch : CC_Base
 		if (pixelize)
 		{
 			pass += 2;
-			material.SetFloat("_Scale", camera.pixelWidth / size);
-			material.SetFloat("_Ratio", camera.pixelWidth / camera.pixelHeight);
+			material.SetFloat("_Scale", GetComponent<Camera>().pixelWidth / size);
+			material.SetFloat("_Ratio", GetComponent<Camera>().pixelWidth / GetComponent<Camera>().pixelHeight);
 		}
 
 		Graphics.Blit(source, destination, material, pass);

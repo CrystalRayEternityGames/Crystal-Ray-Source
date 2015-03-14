@@ -56,7 +56,7 @@ namespace AssemblyCSharp
             model = AssetManager.GetModels[0];//Resources.Load("Crystals/Prefabs/01_crystal") as GameObject;
             mat = Resources.Load("Crystals/Materials/Crystal01-Grey", typeof(Material)) as Material;
 			
-            model.renderer.material = mat;
+            model.GetComponent<Renderer>().material = mat;
 			tesseract = Instantiate(model) as GameObject;
 			tesseract.name = "crystal:"+nameId;
 
@@ -66,13 +66,13 @@ namespace AssemblyCSharp
 			int sHeight = Screen.currentResolution.height;
 			tesseract.transform.position = new Vector3(nPos.x*3f*sWidth/1138+posOffset.x, nPos.y*2.5f*sHeight/640+posOffset.y, 1f);
 			tesseract.transform.localScale = scale;
-			tesseract.renderer.material.color = visitColors[type];
+			tesseract.GetComponent<Renderer>().material.color = visitColors[type];
 		}
 
 		public void traveled()
 		{
 			colorInt = (colorInt + 1) % visitColors.Length;
-			tesseract.renderer.material.color = visitColors[colorInt];
+			tesseract.GetComponent<Renderer>().material.color = visitColors[colorInt];
 		}
 
 		/// <summary>

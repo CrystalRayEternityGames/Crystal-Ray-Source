@@ -33,6 +33,6 @@ public class popupBack : MonoBehaviour {
             endlessModeScript.Instance();
         }*/
 		
-        audio.PlayOneShot(menuSelection);
+        GetComponent<AudioSource>().PlayOneShot(menuSelection);
 	}
 }

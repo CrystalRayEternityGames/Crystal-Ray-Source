@@ -19,10 +19,10 @@ public class popupMenu : MonoBehaviour {
 		restart.AddComponent<TextMesh>();
 		
 		plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-		plane.renderer.transform.position = new Vector3(0f, 1f, -4f);
-		plane.renderer.transform.Rotate(270f,0f,0f);
-		plane.renderer.transform.localScale = new Vector3((screenWidth / screenHeight * 16 / 9) * .25f, 1f, (screenWidth / screenHeight) * .25f);
-		plane.renderer.material.color = Color.white;
+		plane.GetComponent<Renderer>().transform.position = new Vector3(0f, 1f, -4f);
+		plane.GetComponent<Renderer>().transform.Rotate(270f,0f,0f);
+		plane.GetComponent<Renderer>().transform.localScale = new Vector3((screenWidth / screenHeight * 16 / 9) * .25f, 1f, (screenWidth / screenHeight) * .25f);
+		plane.GetComponent<Renderer>().material.color = Color.white;
 		
 		menu.GetComponent<TextMesh>().text = "Main Menu";
 		menu.GetComponent<TextMesh>().font = gameFont;
@@ -30,7 +30,7 @@ public class popupMenu : MonoBehaviour {
 		menu.GetComponent<TextMesh>().fontSize = 100;
 		menu.GetComponent<TextMesh>().alignment = TextAlignment.Left;
 		menu.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
-		menu.renderer.material = textMaterial;
+		menu.GetComponent<Renderer>().material = textMaterial;
 		menu.transform.position = new Vector3(0f, 1f, -4f);
 		menu.transform.localScale = generalSizing;
 	}

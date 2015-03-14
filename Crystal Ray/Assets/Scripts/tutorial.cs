@@ -13,9 +13,9 @@ public class tutorial : MonoBehaviour {
 	void Start() 
 	{
 		plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-		plane.renderer.transform.position = new Vector3(0f, 0f, 0f);
-		plane.renderer.transform.Rotate(90f, 180f,0f);
-		plane.renderer.transform.localScale = new Vector3(1f, 3f, .5f);
+		plane.GetComponent<Renderer>().transform.position = new Vector3(0f, 0f, 0f);
+		plane.GetComponent<Renderer>().transform.Rotate(90f, 180f,0f);
+		plane.GetComponent<Renderer>().transform.localScale = new Vector3(1f, 3f, .5f);
 	}
 
 	/// <summary>
@@ -29,7 +29,7 @@ public class tutorial : MonoBehaviour {
 		} else if(index > 6) {
 			index = 6;
 		} else {
-			plane.renderer.material.mainTexture = tutorialImages[index];
+			plane.GetComponent<Renderer>().material.mainTexture = tutorialImages[index];
 		}
 	}
 

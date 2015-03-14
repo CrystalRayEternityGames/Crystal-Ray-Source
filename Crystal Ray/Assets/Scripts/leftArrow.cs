@@ -18,12 +18,12 @@ public class leftArrow : MonoBehaviour {
 	//Mouse Enters a Box Collider
 	void OnMouseEnter()
 	{
-		renderer.material.color = Color.cyan;
+		GetComponent<Renderer>().material.color = Color.cyan;
 	}
 	//Mouse Leaves a Box Collider
 	void OnMouseExit()
 	{
-		renderer.material.color = Color.white;
+		GetComponent<Renderer>().material.color = Color.white;
 	}
 	
 	void OnMouseDown()
@@ -35,11 +35,11 @@ public class leftArrow : MonoBehaviour {
 	{
 		if(tutorialObject.GetComponent<tutorial>().GetSetTutorialIndex == 0)
 		{
-			renderer.enabled = false;
-			collider.enabled = false;
+			GetComponent<Renderer>().enabled = false;
+			GetComponent<Collider>().enabled = false;
 		} else {
-			renderer.enabled = true;
-			collider.enabled = true;
+			GetComponent<Renderer>().enabled = true;
+			GetComponent<Collider>().enabled = true;
 		}
 	}
 }

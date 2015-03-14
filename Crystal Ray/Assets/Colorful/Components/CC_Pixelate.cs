@@ -19,11 +19,11 @@ public class CC_Pixelate : CC_Base
 				break;
 			case 1:
 			default:
-				material.SetFloat("_Scale", camera.pixelWidth / scale);
+				material.SetFloat("_Scale", GetComponent<Camera>().pixelWidth / scale);
 				break;
 		}
 
-		material.SetFloat("_Ratio", automaticRatio ? (camera.pixelWidth / camera.pixelHeight) : ratio);
+		material.SetFloat("_Ratio", automaticRatio ? (GetComponent<Camera>().pixelWidth / GetComponent<Camera>().pixelHeight) : ratio);
 		Graphics.Blit(source, destination, material);
 	}
 }

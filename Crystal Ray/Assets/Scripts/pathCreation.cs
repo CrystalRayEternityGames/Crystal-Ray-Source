@@ -103,27 +103,6 @@ public class pathCreation : MonoBehaviour
 				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), scale);
 
 				/*
-				field[i, j] = Instantiate(crystal) as GameObject;
-				field[i, j].renderer.material.color = Color.cyan;
-
-				//Set the type of crystal
-				int crystalTypes = Random.Range(0,100);
-				//7% of a Void Crystal Generation
-				if(crystalTypes < 7)
-				{
-					field[i,j].GetComponent<crystal>().type = 0;
-					field[i, j].renderer.material.color = Color.white;
-				} else {
-					field[i,j].GetComponent<crystal>().type = 1;
-				}
-
-				//Give each crystal a unique name, may not be needed
-				field[i, j].name = "CrystalMarker:" + pass;
-				pass++;
-				//Set up the positions
-				field[i, j].GetComponent<crystal>().position = new int[] {i, j};
-				float crystalScale = 1.24f;
-				//field[i, j].transform.position = new Vector3(((i - (fieldWidth / 2f) + 1f) * 1.5f), ((j - (fieldHeight / 2f) + 1f) * 1.5f), 0);
 				float scaleWidth = 9f / fieldWidth * crystalScale;// * screenWidth / 1360f;
 				float scaleHeight =  9f / fieldHeight * crystalScale;// * screenHeight / 740f;
 				field[i, j].transform.position = new Vector3(((i - (fieldWidth / 1f) + 1f) * scaleWidth) + fieldOffset.x, ((j - (fieldHeight / 2f) + 1f) * scaleHeight) + fieldOffset.y, 0);
@@ -220,7 +199,6 @@ public class pathCreation : MonoBehaviour
 				y = 1;
 				break;
 			}
-			
 
 			//If no issues with picked direction, move forward, get new direction
 			if(good)
@@ -285,7 +263,7 @@ public class pathCreation : MonoBehaviour
 			//Correct move
 			if(generatedPath[playerProgress] == usedCrystal)
 			{
-				audio.PlayOneShot(mouseOver);
+				GetComponent<AudioSource>().PlayOneShot(mouseOver);
 				//Particles, temp removed?
 				//generatedPath[playerProgress].renderer.particleSystem.Play();
                 crystalCount++;
@@ -409,10 +387,10 @@ public class pathCreation : MonoBehaviour
 		} else {*/
 			for(int i = 0; i < generatedPath.Count; i++)
 			{
-				Color tempColor = generatedPath[i].tesseract.renderer.material.color;
-				generatedPath[i].tesseract.gameObject.renderer.material.color = globalData.GetComponent<gameVariables>().GetSetAIPathColor;
+				Color tempColor = generatedPath[i].tesseract.GetComponent<Renderer>().material.color;
+				generatedPath[i].tesseract.gameObject.GetComponent<Renderer>().material.color = globalData.GetComponent<gameVariables>().GetSetAIPathColor;
 				yield return new WaitForSeconds(timer);
-				generatedPath[i].tesseract.gameObject.renderer.material.color = tempColor;
+				generatedPath[i].tesseract.gameObject.GetComponent<Renderer>().material.color = tempColor;
 			}
 		//}
 
@@ -440,10 +418,10 @@ public class pathCreation : MonoBehaviour
 		generalText.AddComponent<TextMesh>();	
 
 		plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-		plane.renderer.transform.position = new Vector3(0f, 1f, -3.8f);
-		plane.renderer.transform.Rotate(270f,0f,0f);
-		plane.renderer.transform.localScale = new Vector3((screenWidth / screenHeight * 16 / 9) * .15f, 1f, (screenWidth / screenHeight) * .15f);
-		plane.renderer.material.color = Color.gray;
+		plane.GetComponent<Renderer>().transform.position = new Vector3(0f, 1f, -3.8f);
+		plane.GetComponent<Renderer>().transform.Rotate(270f,0f,0f);
+		plane.GetComponent<Renderer>().transform.localScale = new Vector3((screenWidth / screenHeight * 16 / 9) * .15f, 1f, (screenWidth / screenHeight) * .15f);
+		plane.GetComponent<Renderer>().material.color = Color.gray;
 
 		menu.GetComponent<TextMesh>().text = "Main Menu";
 		menu.GetComponent<TextMesh>().font = gameFont;
@@ -453,7 +431,7 @@ public class pathCreation : MonoBehaviour
 		menu.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
 		menu.GetComponent<BoxCollider>().size = new Vector3(50f, 10f, 0f);
 		menu.GetComponent<BoxCollider>().center = new Vector3(0f,1f,2f);
-		menu.renderer.material = textMaterial;
+		menu.GetComponent<Renderer>().material = textMaterial;
 		menu.transform.position = new Vector3(-1f, 0f, -4f);
 		menu.transform.localScale = generalSizing;
 
@@ -465,7 +443,7 @@ public class pathCreation : MonoBehaviour
 		restartGame.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
 		restartGame.GetComponent<BoxCollider>().size = new Vector3(50f, 10f, 0f);
 		restartGame.GetComponent<BoxCollider>().center = new Vector3(0f,1f,2f);
-		restartGame.renderer.material = textMaterial;
+		restartGame.GetComponent<Renderer>().material = textMaterial;
 		restartGame.transform.position = new Vector3(1.5f, 0f, -4f);
 		restartGame.transform.localScale = generalSizing;
 
@@ -475,7 +453,7 @@ public class pathCreation : MonoBehaviour
 		generalText.GetComponent<TextMesh>().fontSize = 70;
 		generalText.GetComponent<TextMesh>().alignment = TextAlignment.Left;
 		generalText.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
-		generalText.renderer.material = textMaterial;
+		generalText.GetComponent<Renderer>().material = textMaterial;
 		generalText.transform.position = new Vector3(0.25f, 1.5f, -4f);
 		generalText.transform.localScale = generalSizing;
 	}

@@ -1,12 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\crystal.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\pathCreation.cs">
     <Files>
-      <File FileName="Assets\Scripts\score.cs" Line="45" Column="58" />
-      <File FileName="Assets\Scripts\mainMenu.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\pathCreation.cs" Line="60" Column="50" />
-      <File FileName="Assets\Scripts\crystal.cs" Line="26" Column="3" />
-      <File FileName="Assets\Scripts\gameVariables.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\pathCreation.cs" Line="95" Column="4" />
+      <File FileName="Assets\Scripts\crystal.cs" Line="71" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

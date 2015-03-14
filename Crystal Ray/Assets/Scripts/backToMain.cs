@@ -8,25 +8,25 @@ public class backToMain : MonoBehaviour {
 	//Mouse Enters a Box Collider
 	void OnMouseEnter()
 	{
-		renderer.material.color = Color.cyan;
+		GetComponent<Renderer>().material.color = Color.cyan;
 	}
 	//Mouse Leaves a Box Collider
 	void OnMouseExit()
 	{
-		renderer.material.color = Color.white;
+		GetComponent<Renderer>().material.color = Color.white;
 	}
 	//Mouse Clicks a Box Collider
 	void OnMouseDown()
 	{
 		Application.LoadLevel("mainMenu");
-		audio.PlayOneShot(menuSelection);
+		GetComponent<AudioSource>().PlayOneShot(menuSelection);
 	}
 	void Update()
 	{
 		if(Input.GetKeyDown(KeyCode.Escape))
 		{
 			Application.LoadLevel("mainMenu");
-			audio.PlayOneShot(menuSelection);
+			GetComponent<AudioSource>().PlayOneShot(menuSelection);
 		}
 	}
 }

@@ -10,12 +10,12 @@ public class restart : MonoBehaviour {
 	//Mouse Enters a Box Collider
 	void OnMouseEnter()
 	{
-		renderer.material.color = Color.cyan;
+		GetComponent<Renderer>().material.color = Color.cyan;
 	}
 	//Mouse Leaves a Box Collider
 	void OnMouseExit()
 	{
-		renderer.material.color = Color.white;
+		GetComponent<Renderer>().material.color = Color.white;
 	}
 	//Mouse Clicks a Box Collider
 	void OnMouseDown()
@@ -25,6 +25,6 @@ public class restart : MonoBehaviour {
 		//Grant, Jade, if you see this/use this again, look into it more to fix it up
 
 		Application.LoadLevel(Application.loadedLevelName == NAME ? NAME : "gameWorld");
-		audio.PlayOneShot(menuSelection);
+		GetComponent<AudioSource>().PlayOneShot(menuSelection);
 	}
 }
