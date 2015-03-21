@@ -8,22 +8,22 @@ public class pathCreation : MonoBehaviour
 {
 	
 	#region Fields
-
+	
 	public AudioClip mouseOver;
 	public Font gameFont;
 	public Material textMaterial;
 	//private static pathCreation instance = null;
-
+	
 	//Begin the ackwarding
-
-	public crystal[,] field = new crystal[9,9];
+	
+	public crystal[,] field;
 	public List<int> indexX = new List<int>();
 	public List<int> indexY = new List<int>();
 	protected List<crystal> generatedPath = new List<crystal>();
 	protected List<crystal> playerPath = new List<crystal>();
-
+	
 	//End such shinanigens
-
+	
 	//protected GameObject crystal = null;
 	protected GameObject globalData = null;
 	//protected List<GameObject> generatedPath = new List<GameObject>();
@@ -32,76 +32,72 @@ public class pathCreation : MonoBehaviour
 	int playerProgress = 0;
 	//protected Color[] visitColors = new Color[] {Color.green, Color.red, Color.magenta, Color.yellow, orange};
 	protected bool started = false;
-
+	
 	protected int fieldWidth; 
 	protected int fieldHeight;
 	protected Vector2 fieldOffset;
 	protected int pass = 0;
 	protected int crystalCount = 0;
 	protected float timer = 1.0f;
-
+	
 	protected bool ableToMove = false;
 	protected bool playing = true;
 	#endregion
-
+	
 	#region Private Methods
-
+	
 	/// <summary>
 	/// Resets the index lists
 	/// </summary>
-	private void indexReset(List<int> index)
+	private void indexReset(List<int> index, int fSize)
 	{
-		//Empty index, refill with 0 to 9
+		//Empty index, refill with 0 to fSize
 		index.Clear();
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < fSize; i++)
 		{
 			index.Add (i);
 		}
 	}
-
+	
 	/// <summary>
 	/// Creates the field.
-    /// </summary>
-    #if NET_VERSION_4_5
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    #endif
-    protected void CreateField ()
+	/// </summary>
+	#if NET_VERSION_4_5
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	#endif
+	protected void CreateField ()
 	{
 		float screenWidth = (float)Screen.width;
 		float screenHeight = (float)Screen.height;
-
+		
 		//Clear the x and y indexes
-		indexReset(indexX);
-		indexReset(indexY);
-
+		indexReset(indexX, fieldWidth);
+		indexReset(indexY, fieldHeight);
+		field = new crystal[fieldWidth, fieldHeight];
+		
 		//Todo, impliment max values
 		//field = new GameObject[fieldWidth, fieldHeight];
-
+		
 		//Enforce aspect ratio of 16/9
 		//int widerSide = screenWidth/16.0f < screenHeight/9.0f ? 0 : 1;
-
+		
 		//Create the grid
 		//Doing <= so we can use fieldWidth and such without -1
 		for (int i = 0; i < fieldWidth; i++) {
 			for (int j = 0; j < fieldHeight; j++) {
-
+				
 				//Arguments: name, position, scale
-
+				
 				//Name
 				pass++;
-
+				
 				//Position just uses i and j indexes, adjusting position will be handled by each crystal
 
-				//Scale
-				float crystalScale = 1.24f;
 				//Handle scaling
-				float scaleWidth = 9f / fieldWidth * crystalScale;
-				float scaleHeight = 9f / fieldHeight * crystalScale;
-				Vector3 scale = new Vector3(scaleWidth / 6.0f, scaleHeight / 6.0f, (scaleWidth + scaleHeight)/3f / 6.0f);
-				//field[i, j].transform.position = new Vector3(((i - (fieldWidth / 1f) + 1f) * scaleWidth) + fieldOffset.x, ((j - (fieldHeight / 2f) + 1f) * scaleHeight) + fieldOffset.y, 0);
-
+				Vector3 scale = new Vector3((float)fieldWidth,(float)fieldHeight,(float)fieldWidth);
+				
 				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), scale);
-
+				
 				/*
 				float scaleWidth = 9f / fieldWidth * crystalScale;// * screenWidth / 1360f;
 				float scaleHeight =  9f / fieldHeight * crystalScale;// * screenHeight / 740f;
@@ -110,23 +106,23 @@ public class pathCreation : MonoBehaviour
 				*/
 			}
 		}
-
+		
 		//Generate Path
 		while(!generatePath())
 			continue;
 	}
-
-    #if NET_VERSION_4_5
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    #endif
-    public bool generatePath()
+	
+	#if NET_VERSION_4_5
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	#endif
+	public bool generatePath()
 	{
 		//Let's make a path!
 		//Length of path to travel
 		generatedPath = new List<crystal>();
 		
 		int currentLevel = (int)Mathf.Round(globalData.GetComponent<gameVariables>().GetSetLevelsCompleted * 0.5f) + 1;
-
+		
 		//Generate until not on a void, if infinite loop, all ledges are void...
 		while(generatedPath.Count < 1)
 		{
@@ -141,11 +137,11 @@ public class pathCreation : MonoBehaviour
 			if(field[indexX[x],indexY[y]].type != 0)
 				generatedPath.Add(field[indexX[x],indexY[y]]);
 		}
-
+		
 		//Pick starting direction
 		int currentDirection = Random.Range(0,3);
 		int[] triedDirections = new int[] {0,0,0,0};
-
+		
 		//Start traveling
 		while(currentLevel > 0)
 		{
@@ -153,53 +149,61 @@ public class pathCreation : MonoBehaviour
 			Vector2 currentPosition = generatedPath[generatedPath.Count-1].position;
 			int x = 0;
 			int y = 0;
-
+			
 			//Find if picked direction is good
 			switch(currentDirection)
 			{
-			//Right
+				//Right
 			case (0):
 				//If at right edge, going right
+				//Start turn into function
 				if((int)currentPosition.x == fieldWidth - 1 || 
 				   field[indexX[(int)currentPosition.x + 1], indexY[(int)currentPosition.y]].type == 0)
 				{
 					good = false;
 				}
+				//End turn into function
 				x = 1;
 				triedDirections[0] = 1;
 				break;
-			//Up
+				//Up
 			case (1):
+				//Start turn into function
 				if((int)currentPosition.y == 0 || 
 				   field[indexX[(int)currentPosition.x], indexY[(int)currentPosition.y - 1]].type == 0)
 				{
 					good = false;
 				}
+				//End turn into function
 				y = -1;
 				triedDirections[1] = 1;
 				break;
-			//Left
+				//Left
 			case (2):
+				//Start turn into function
 				if((int)currentPosition.x == 0 || 
 				   field[indexX[(int)currentPosition.x - 1], indexY[(int)currentPosition.y]].type == 0)
 				{
 					good = false;
 				}
+				//End turn into function
 				triedDirections[2] = 1;
 				x = -1;
 				break;
-			//Down
+				//Down
 			case (3):
+				//Start turn into function
 				if((int)currentPosition.y == fieldHeight - 1 || 
 				   field[indexX[(int)currentPosition.x], indexY[(int)currentPosition.y + 1]].type == 0)
 				{
 					good = false;
 				}
+				//End turn into function
 				triedDirections[3] = 1;
 				y = 1;
 				break;
 			}
-
+			
 			//If no issues with picked direction, move forward, get new direction
 			if(good)
 			{
@@ -214,11 +218,11 @@ public class pathCreation : MonoBehaviour
 					return false;
 			}
 		}
-
+		
 		//Finished path
 		return true;
 	}
-
+	
 	//TODO: Implement better system that tries to keep track of direction used over time
 	public int getDirection(int currentDirection, int[] triedDirections)
 	{
@@ -227,24 +231,24 @@ public class pathCreation : MonoBehaviour
 		for(int i = 0; i < 4; i++)
 			if(triedDirections[i] == 0)
 				dirList.Add(i);
-
+		
 		//All directions tried, infinite loop
 		if(dirList.Count == 0)
 			return -1;
-
+		
 		int newDirection = Random.Range(0,100);
 		//Set directions, 15% backwards, 15% forward, %35 each side
 		int picked = -1;
 		//while(picked < 0)
 		//{
-			picked = newDirection < 15 ? 2 : newDirection < 30 ? 0 : newDirection < 65 ? 1 : 3;
+		picked = newDirection < 15 ? 2 : newDirection < 30 ? 0 : newDirection < 65 ? 1 : 3;
 		//	if(!dirList.Contains(picked))
 		//		picked = -1;
 		//}
-
+		
 		return (currentDirection + picked) % 4;
 	}
-
+	
 	//Player has moved
 	public void doMove(crystal usedCrystal)
 	{
@@ -253,28 +257,28 @@ public class pathCreation : MonoBehaviour
 		{
 			//Give player path to follow later
 			playerPath.Add(usedCrystal);
-
+			
 			//Set color to traveled
 			usedCrystal.traveled();
-
+			
 			//Move color index forward, account for fixed length and roll over
 			//usedCrystal.gameObject.GetComponent<crystal>().colorIndex = usedCrystal.gameObject.GetComponent<crystal>().colorIndex + 1 % visitColors.Length;
-
+			
 			//Correct move
 			if(generatedPath[playerProgress] == usedCrystal)
 			{
 				GetComponent<AudioSource>().PlayOneShot(mouseOver);
 				//Particles, temp removed?
 				//generatedPath[playerProgress].renderer.particleSystem.Play();
-                crystalCount++;
+				crystalCount++;
 				if(playerProgress == generatedPath.Count - 1)
 				{
-                	globalData.GetComponent<gameVariables>().GetSetLevelsCompleted += 1;
-                	Application.LoadLevel("gameWorld");
+					globalData.GetComponent<gameVariables>().GetSetLevelsCompleted += 1;
+					Application.LoadLevel("gameWorld");
 				}
 				current = usedCrystal.gameObject;
 				playerProgress++;
-			//Bad move
+				//Bad move
 			} else {
 				//Do gameover, make it fancy later
 				//Application.LoadLevel("mainMenu");
@@ -284,14 +288,14 @@ public class pathCreation : MonoBehaviour
 			}
 		}
 	}
-
+	
 	//Start the game
 	//Jade reminder: Handle this
 	public void doStart()
 	{
 		started = true;
 	}
-
+	
 	/// <summary>
 	/// Sets the variables for difficulties.
 	/// </summary>
@@ -302,36 +306,36 @@ public class pathCreation : MonoBehaviour
 		int increaseWidth = 0;
 		int increaseHeight = 0;
 		fieldOffset = new Vector2(3.0f, -0.3f);
-            int levels = globalData.GetComponent<gameVariables>().GetSetLevelsCompleted;
-
-            if (levels > 1 && levels <= 3)
-            {
-                timeDecrease = Random.Range(0.05f, 0.07f);
-
-            }
-            else if (levels > 3 && levels <= 8)
-            {
-                timeDecrease = Random.Range(0.06f, 0.08f);
-                increaseWidth = 1;
-            }
-            else if (levels > 8 && levels <= 20)
-            {
-                timeDecrease = Random.Range(0.07f, 0.1f);
-                increaseWidth = 1;
-                increaseHeight = 1;
-            }
-            else if (levels > 20)
-            {
-                timeDecrease = Random.Range(0.1f, 0.15f);
-                increaseWidth = 2;
-                increaseHeight = 2;
-            }
-
-            fieldHeight = 4 + increaseHeight;
-            fieldWidth = 4 + increaseWidth;
+		int levels = globalData.GetComponent<gameVariables>().GetSetLevelsCompleted;
+		
+		if (levels > 1 && levels <= 3)
+		{
+			timeDecrease = Random.Range(0.05f, 0.07f);
+			
+		}
+		else if (levels > 3 && levels <= 8)
+		{
+			timeDecrease = Random.Range(0.06f, 0.08f);
+			increaseWidth = 1;
+		}
+		else if (levels > 8 && levels <= 20)
+		{
+			timeDecrease = Random.Range(0.07f, 0.1f);
+			increaseWidth = 1;
+			increaseHeight = 1;
+		}
+		else if (levels > 20)
+		{
+			timeDecrease = Random.Range(0.1f, 0.15f);
+			increaseWidth = 2;
+			increaseHeight = 2;
+		}
+		
+		fieldHeight = 4 + increaseHeight;
+		fieldWidth = 4 + increaseWidth;
 		timer = Random.Range(0.5f - timeDecrease, 0.7f - timeDecrease);
 	}
-
+	
 	/// <summary>
 	/// Start the Game.
 	/// </summary>
@@ -342,7 +346,7 @@ public class pathCreation : MonoBehaviour
 		CreateField();
 		StartCoroutine("ChangeTexture");
 	}
-
+	
 	/// <summary>
 	/// Update this instance.
 	/// </summary>
@@ -355,11 +359,11 @@ public class pathCreation : MonoBehaviour
 			globalData.GetComponent<gameVariables>().GetSetLevelsCompleted = 0;
 		}
 	}
-
+	
 	#endregion
-
+	
 	#region Other Methods
-
+	
 	/// <summary>
 	/// Changes the texture of the Crystal.
 	/// </summary>
@@ -385,19 +389,19 @@ public class pathCreation : MonoBehaviour
 				generatedPath[j].renderer.material.color = Color.cyan;
 			}
 		} else {*/
-			for(int i = 0; i < generatedPath.Count; i++)
-			{
-				Color tempColor = generatedPath[i].tesseract.GetComponent<Renderer>().material.color;
-				generatedPath[i].tesseract.gameObject.GetComponent<Renderer>().material.color = globalData.GetComponent<gameVariables>().GetSetAIPathColor;
-				yield return new WaitForSeconds(timer);
-				generatedPath[i].tesseract.gameObject.GetComponent<Renderer>().material.color = tempColor;
-			}
+		for(int i = 0; i < generatedPath.Count; i++)
+		{
+			Color tempColor = generatedPath[i].tesseract.GetComponent<Renderer>().material.color;
+			generatedPath[i].tesseract.gameObject.GetComponent<Renderer>().material.color = globalData.GetComponent<gameVariables>().GetSetAIPathColor;
+			yield return new WaitForSeconds(timer);
+			generatedPath[i].tesseract.gameObject.GetComponent<Renderer>().material.color = tempColor;
+		}
 		//}
-
-
-	ableToMove = true;
+		
+		
+		ableToMove = true;
 	}
-
+	
 	protected void PopUp()
 	{
 		float screenWidth = (float)Screen.width;
@@ -416,13 +420,13 @@ public class pathCreation : MonoBehaviour
 		restartGame.AddComponent<AudioSource>();
 		GameObject generalText = new GameObject();
 		generalText.AddComponent<TextMesh>();	
-
+		
 		plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		plane.GetComponent<Renderer>().transform.position = new Vector3(0f, 1f, -3.8f);
 		plane.GetComponent<Renderer>().transform.Rotate(270f,0f,0f);
 		plane.GetComponent<Renderer>().transform.localScale = new Vector3((screenWidth / screenHeight * 16 / 9) * .15f, 1f, (screenWidth / screenHeight) * .15f);
 		plane.GetComponent<Renderer>().material.color = Color.gray;
-
+		
 		menu.GetComponent<TextMesh>().text = "Main Menu";
 		menu.GetComponent<TextMesh>().font = gameFont;
 		menu.GetComponent<TextMesh>().color = Color.white;
@@ -434,7 +438,7 @@ public class pathCreation : MonoBehaviour
 		menu.GetComponent<Renderer>().material = textMaterial;
 		menu.transform.position = new Vector3(-1f, 0f, -4f);
 		menu.transform.localScale = generalSizing;
-
+		
 		restartGame.GetComponent<TextMesh>().text = "Restart";
 		restartGame.GetComponent<TextMesh>().font = gameFont;
 		restartGame.GetComponent<TextMesh>().color = Color.white;
@@ -446,7 +450,7 @@ public class pathCreation : MonoBehaviour
 		restartGame.GetComponent<Renderer>().material = textMaterial;
 		restartGame.transform.position = new Vector3(1.5f, 0f, -4f);
 		restartGame.transform.localScale = generalSizing;
-
+		
 		generalText.GetComponent<TextMesh>().text = "Wrong Path Crystal!";
 		generalText.GetComponent<TextMesh>().font = gameFont;
 		generalText.GetComponent<TextMesh>().color = Color.white;
@@ -458,9 +462,9 @@ public class pathCreation : MonoBehaviour
 		generalText.transform.localScale = generalSizing;
 	}
 	#endregion
-
+	
 	#region Public Methods
-
+	
 	/// <summary>
 	/// Instance this instance.
 	/// </summary>
@@ -472,11 +476,11 @@ public class pathCreation : MonoBehaviour
 		}
 		return instance;
 	}*/
-
+	
 	#endregion
-
+	
 	#region Properties
-
+	
 	/// <summary>
 	/// Gets a value indicating whether this <see cref="pathCreation"/> get able to move.
 	/// </summary>
@@ -485,11 +489,11 @@ public class pathCreation : MonoBehaviour
 	{
 		get{return ableToMove;}
 	}
-
+	
 	public bool GamePlaying
 	{
 		get{return playing;}
 	}
-
+	
 	#endregion
 }

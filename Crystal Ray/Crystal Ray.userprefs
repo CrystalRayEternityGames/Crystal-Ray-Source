@@ -1,9 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\pathCreation.cs">
     <Files>
-      <File FileName="Assets\Scripts\pathCreation.cs" Line="95" Column="4" />
-      <File FileName="Assets\Scripts\crystal.cs" Line="71" Column="3" />
+      <File FileName="Assets\Scripts\pathCreation.cs" Line="183" Column="31" />
+      <File FileName="Assets\Scripts\crystal.cs" Line="69" Column="26" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
