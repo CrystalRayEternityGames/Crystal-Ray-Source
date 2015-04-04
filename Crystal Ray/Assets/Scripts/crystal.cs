@@ -12,6 +12,7 @@ namespace AssemblyCSharp
 		GameObject globalData = null;
 		//bool pressed = false;
 		public Vector2 position;
+		public Vector2 positionOffset;
 		public Vector3 scale;
 		public int type;
 		public int colorIndex = 0;
@@ -49,7 +50,9 @@ namespace AssemblyCSharp
 			type = crystalTypes < 7 ? 0 : 1;
 			
 			nameId = id;
-			position = nPos * 3.0f;
+			position = nPos;
+			positionOffset = position * 3.0f;
+            positionOffset += new Vector2(-2.5f, -4.5f);
 			scale = new Vector3(1.5f / nScale.x, 1.5f / nScale.y, 1.5f / nScale.z);
 			
 			//Grants Change here
@@ -58,18 +61,11 @@ namespace AssemblyCSharp
 			
 			model.GetComponent<Renderer>().material = mat;
 			tesseract = Instantiate(model) as GameObject;
+			tesseract.transform.SetParent (Camera.main.transform);
 			tesseract.name = "crystal:"+nameId;
 			
-			//Handle position on a 1138x640 resolution
-			Vector2 posOffset = new Vector2(-0.5f, -0f);
-			
-			int sWidth = Screen.currentResolution.width;
-			int sHeight = Screen.currentResolution.height;
-			float ratio = (sWidth / sHeight * 4.0f);
-			float ratioOffset = -0.5f;
-			
-			tesseract.transform.localPosition = new Vector3((ratio * position.x) + posOffset.x + ratioOffset, (position.y) + posOffset.y, 1f);
-			tesseract.transform.localScale = new Vector3(scale.x * ratio + ratioOffset, scale.y, scale.z * ratio + ratioOffset);
+			tesseract.transform.localPosition = new Vector3(positionOffset.x, positionOffset.y, 1f);
+			tesseract.transform.localScale = new Vector3(scale.x, scale.y, scale.z);
 			tesseract.GetComponent<Renderer>().material.color = visitColors[type];
 		}
 		

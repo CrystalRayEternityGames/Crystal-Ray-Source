@@ -83,6 +83,7 @@
      <Compile Include="Assets\Scripts\background.cs" />
      <Compile Include="Assets\Scripts\crystal.cs" />
      <Compile Include="Assets\Scripts\endlessModeScript.cs" />
+     <Compile Include="Assets\Scripts\gameMain.cs" />
      <Compile Include="Assets\Scripts\gameVariables.cs" />
      <Compile Include="Assets\Scripts\leftArrow.cs" />
      <Compile Include="Assets\Scripts\mainMenu.cs" />

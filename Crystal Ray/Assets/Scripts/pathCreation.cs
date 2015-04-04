@@ -35,6 +35,7 @@ public class pathCreation : MonoBehaviour
 	
 	protected int fieldWidth; 
 	protected int fieldHeight;
+	protected float scaleWidth;
 	protected Vector2 fieldOffset;
 	protected int pass = 0;
 	protected int crystalCount = 0;
@@ -111,10 +112,7 @@ public class pathCreation : MonoBehaviour
 		while(!generatePath())
 			continue;
 	}
-	
-	#if NET_VERSION_4_5
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	#endif
+
 	public bool generatePath()
 	{
 		//Let's make a path!
@@ -220,6 +218,17 @@ public class pathCreation : MonoBehaviour
 		}
 		
 		//Finished path
+		return true;
+	}
+
+	public bool checkMove(Vector2 posCheck)
+	{
+		if (posCheck.x < 0 || posCheck.y < 0)
+						return false;
+		if ((int)posCheck.x >= fieldWidth || (int)posCheck.y >= fieldHeight)
+						return false;
+		if (field [(int)posCheck.x, (int)posCheck.y].type == 0)
+						return false;
 		return true;
 	}
 	
@@ -342,16 +351,26 @@ public class pathCreation : MonoBehaviour
 	protected virtual void Start ()
 	{
 		globalData = GameObject.FindGameObjectWithTag("Global");
+		if (globalData == null) {
+			globalData = new GameObject();
+			globalData.AddComponent<gameVariables>();
+			globalData.tag = "Global";
+		}
 		SetVariables();
 		CreateField();
 		StartCoroutine("ChangeTexture");
 	}
-	
+
 	/// <summary>
 	/// Update this instance.
 	/// </summary>
 	protected virtual void Update ()
 	{
+		scaleWidth = (float)Screen.width / (float)Screen.height * 0.8f;
+		var temp = this.gameObject.transform.localScale;
+		if (scaleWidth-this.gameObject.transform.localScale.x > 0.001)
+			this.gameObject.transform.localScale = new Vector3(scaleWidth,temp.y,temp.z);
+
 		if (Input.GetKey(KeyCode.Escape)) 
 		{
 			globalData.GetComponent<gameVariables>().SaveScore();

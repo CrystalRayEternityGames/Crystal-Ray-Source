@@ -27,12 +27,19 @@ public class score : MonoBehaviour {
 		highScore = new GameObject();
 		highScore.AddComponent<TextMesh>();
 		generalSizing = new Vector3(0.05f,0.05f,0f);
+		wait (2); //If needed, this makes score wait for a second if needed to grab the object
 		globalData = GameObject.FindGameObjectWithTag("Global");
 		current = globalData.GetComponent<gameVariables>().GetSetLevelsCompleted;
 		high = PlayerPrefs.GetInt("Score");
 		
 		GenerateScore();
 	}
+
+	//Easy way to get something to wait
+	IEnumerator wait(float seconds)
+	{
+		yield return new WaitForSeconds(seconds);
+		}
 	
 	/// <summary>
 	/// Generates the score.
