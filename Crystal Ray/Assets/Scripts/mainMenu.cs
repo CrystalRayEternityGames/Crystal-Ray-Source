@@ -8,7 +8,6 @@ public class mainMenu : MonoBehaviour {
 	public bool startGame = false;
 	public bool tutorial = false;
     public bool endlessMode = false;
-	public bool end = false;
 	public bool credits = false;
 	public AudioClip menuSelect;
 
@@ -51,12 +50,6 @@ public class mainMenu : MonoBehaviour {
         {
             GetComponent<AudioSource>().PlayOneShot(menuSelect);
             Application.LoadLevel("credits");
-        }
-        //End
-        else if (end)
-        {
-            GetComponent<AudioSource>().PlayOneShot(menuSelect);
-            Application.Quit();
         }
 	}
 
