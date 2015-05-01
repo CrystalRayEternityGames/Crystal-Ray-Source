@@ -87,7 +87,7 @@
      <Compile Include="Assets\Scripts\gameVariables.cs" />
      <Compile Include="Assets\Scripts\leftArrow.cs" />
      <Compile Include="Assets\Scripts\mainMenu.cs" />
-     <Compile Include="Assets\Scripts\pathCreation.cs" />
+     <Compile Include="Assets\Scripts\pathCreation_unused.cs" />
      <Compile Include="Assets\Scripts\popupBack.cs" />
      <Compile Include="Assets\Scripts\popupMenu.cs" />
      <Compile Include="Assets\Scripts\restart.cs" />

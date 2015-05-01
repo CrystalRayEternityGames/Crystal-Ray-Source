@@ -95,10 +95,10 @@ public class gameMain : MonoBehaviour
 				//Position just uses i and j indexes, adjusting position will be handled by each crystal
 				
 				//Handle scaling
-				Vector3 scale = new Vector3((float)fieldWidth,(float)fieldHeight,(float)fieldWidth);
+				var dimensions = new Vector2((float)fieldWidth,(float)fieldHeight);
 				
-				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), scale);
-				
+				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), dimensions, gameObject);
+
 				/*
 				float scaleWidth = 9f / fieldWidth * crystalScale;// * screenWidth / 1360f;
 				float scaleHeight =  9f / fieldHeight * crystalScale;// * screenHeight / 740f;
@@ -338,10 +338,12 @@ public class gameMain : MonoBehaviour
 	{
 		scaleWidth = (float)Screen.width / (float)Screen.height * 0.8f; //0.8 is reverse of 5:4 ratio, 60f is camera default fieldofview
 		var temp = Camera.main.gameObject.transform.localScale;//this.gameObject.transform.localScale;
-		if (Mathf.Abs (scaleWidth.CompareTo (temp.x)) > 0.001)
-						Camera.main.gameObject.transform.localScale = new Vector3(scaleWidth,temp.y,temp.z);
-		var theCount = Camera.main.gameObject.transform.GetChild(0);
-		
+		//if (Mathf.Abs (scaleWidth.CompareTo (temp.x)) > 0.001)
+		//				Camera.main.gameObject.transform.localScale = new Vector3(scaleWidth,temp.y,temp.z);
+		//var theCount = Camera.main.gameObject.transform.GetChild(0);
+		foreach (Camera cam in Camera.allCameras)
+						cam.aspect = 1;
+
 		if (Input.GetKey(KeyCode.Escape)) 
 		{
 			globalData.GetComponent<gameVariables>().SaveScore();

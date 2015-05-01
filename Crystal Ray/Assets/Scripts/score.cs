@@ -27,12 +27,19 @@ public class score : MonoBehaviour {
 		highScore = new GameObject();
 		highScore.AddComponent<TextMesh>();
 		generalSizing = new Vector3(0.05f,0.05f,0f);
-		wait (2); //If needed, this makes score wait for a second if needed to grab the object
 		globalData = GameObject.FindGameObjectWithTag("Global");
+		if (globalData == null) {
+			globalData = new GameObject();
+			globalData.AddComponent<gameVariables>();
+			globalData.tag = "Global";
+		}
 		current = globalData.GetComponent<gameVariables>().GetSetLevelsCompleted;
 		high = PlayerPrefs.GetInt("Score");
-		
-		GenerateScore();
+
+		var p = new Vector3(-4.5f, 4.5f, 1f);
+		var height = 0.7f;
+		GenerateScore(playerScore, "Current: " + current.ToString(), "Current score string", p);
+		GenerateScore(highScore, "High Score: " + high.ToString(), "High score string", new Vector3(p.x,p.y-height,p.z));
 	}
 
 	//Easy way to get something to wait
@@ -44,25 +51,19 @@ public class score : MonoBehaviour {
 	/// <summary>
 	/// Generates the score.
 	/// </summary>
-	void GenerateScore()
+	void GenerateScore(GameObject obj, string str, string name, Vector3 pos)
 	{
-		playerScore.GetComponent<TextMesh>().text = "Current: " + current.ToString();
-		playerScore.GetComponent<TextMesh>().font = gameFont;
-		playerScore.GetComponent<TextMesh>().fontSize = 100;
-		playerScore.GetComponent<TextMesh>().alignment = TextAlignment.Left;
-		playerScore.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
-		playerScore.GetComponent<Renderer>().material = textMaterial;
-		playerScore.transform.position = new Vector3(Screen.width / Screen.height * 16 / 9 - 6.5f, (Screen.width / Screen.height) + 4.7f, 0);//(Screen.width/16/9) * 2f,(Screen.height/16/9) * 2.7f,0f);
-		playerScore.transform.localScale = generalSizing;
-
-		highScore.GetComponent<TextMesh>().text = "High Score: " + high.ToString();
-		highScore.GetComponent<TextMesh>().font = gameFont;
-		highScore.GetComponent<TextMesh>().fontSize = 100;
-		highScore.GetComponent<TextMesh>().alignment = TextAlignment.Left;
-		highScore.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
-		highScore.GetComponent<Renderer>().material = textMaterial;
-		highScore.transform.position = new Vector3(Screen.width / Screen.height * 16 / 9 - 6.5f, (Screen.width / Screen.height) + 5.2f, 0);//(Screen.width/16/9) * 2f,(Screen.height/16/9) * 3f,0f);
-		highScore.transform.localScale = generalSizing;
+		obj.GetComponent<TextMesh>().text = str;
+		obj.GetComponent<TextMesh>().font = gameFont;
+		obj.GetComponent<TextMesh>().fontSize = 100;
+		obj.GetComponent<TextMesh>().alignment = TextAlignment.Left;
+		obj.GetComponent<TextMesh>().anchor = TextAnchor.UpperLeft;
+		obj.GetComponent<Renderer>().material = textMaterial;
+		obj.transform.SetParent (transform);
+		obj.layer = gameObject.layer;
+		obj.name = name;
+		obj.transform.localPosition = pos;//(Screen.width/16/9) * 2f,(Screen.height/16/9) * 2.7f,0f);
+		obj.transform.localScale = generalSizing;
 	}
 	
 	#endregion

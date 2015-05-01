@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AssemblyCSharp;
 
-public class pathCreation : MonoBehaviour
+public class pathCreation_unused : MonoBehaviour
 {
 	
 	#region Fields
@@ -95,9 +95,9 @@ public class pathCreation : MonoBehaviour
 				//Position just uses i and j indexes, adjusting position will be handled by each crystal
 
 				//Handle scaling
-				Vector3 scale = new Vector3((float)fieldWidth,(float)fieldHeight,(float)fieldWidth);
+				var dimensions = new Vector2((float)fieldWidth,(float)fieldHeight);
 				
-				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), scale);
+				//field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), dimensions);
 				
 				/*
 				float scaleWidth = 9f / fieldWidth * crystalScale;// * screenWidth / 1360f;

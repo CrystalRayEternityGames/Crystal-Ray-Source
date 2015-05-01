@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class endlessModeScript : pathCreation
+public class endlessModeScript : gameMain
 {
     #region Fields
     //private static endlessModeScript instance = null;
