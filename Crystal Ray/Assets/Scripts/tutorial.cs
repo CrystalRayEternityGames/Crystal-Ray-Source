@@ -31,6 +31,11 @@ public class tutorial : MonoBehaviour {
 		} else {
 			plane.GetComponent<Renderer>().material.mainTexture = tutorialImages[index];
 		}
+
+		if (Input.GetKey(KeyCode.Escape)) 
+		{
+			Application.LoadLevel("mainMenu");
+		}
 	}
 
 	/// <summary>

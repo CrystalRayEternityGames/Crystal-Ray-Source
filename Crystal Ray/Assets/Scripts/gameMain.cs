@@ -95,10 +95,10 @@ public class gameMain : MonoBehaviour
 				//Position just uses i and j indexes, adjusting position will be handled by each crystal
 				
 				//Handle scaling
-				var dimensions = new Vector2((float)fieldWidth,(float)fieldHeight);
+				Vector3 scale = new Vector3((float)fieldWidth,(float)fieldHeight,(float)fieldWidth);
 				
-				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), dimensions, gameObject);
-
+				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), scale);
+				
 				/*
 				float scaleWidth = 9f / fieldWidth * crystalScale;// * screenWidth / 1360f;
 				float scaleHeight =  9f / fieldHeight * crystalScale;// * screenHeight / 740f;
@@ -263,7 +263,8 @@ public class gameMain : MonoBehaviour
 				//Application.LoadLevel("mainMenu");
 				ableToMove = false;
 				playing = false;
-				PopUp();
+				//PopUp();
+				globalData.GetComponent<gameVariables>().GetSetFailed = true;
 			}
 		}
 	}
@@ -338,12 +339,10 @@ public class gameMain : MonoBehaviour
 	{
 		scaleWidth = (float)Screen.width / (float)Screen.height * 0.8f; //0.8 is reverse of 5:4 ratio, 60f is camera default fieldofview
 		var temp = Camera.main.gameObject.transform.localScale;//this.gameObject.transform.localScale;
-		//if (Mathf.Abs (scaleWidth.CompareTo (temp.x)) > 0.001)
-		//				Camera.main.gameObject.transform.localScale = new Vector3(scaleWidth,temp.y,temp.z);
-		//var theCount = Camera.main.gameObject.transform.GetChild(0);
-		foreach (Camera cam in Camera.allCameras)
-						cam.aspect = 1;
-
+		if (Mathf.Abs (scaleWidth.CompareTo (temp.x)) > 0.001)
+						Camera.main.gameObject.transform.localScale = new Vector3(scaleWidth,temp.y,temp.z);
+		var theCount = Camera.main.gameObject.transform.GetChild(0);
+		
 		if (Input.GetKey(KeyCode.Escape)) 
 		{
 			globalData.GetComponent<gameVariables>().SaveScore();
@@ -394,7 +393,7 @@ public class gameMain : MonoBehaviour
 		ableToMove = true;
 	}
 	
-	protected void PopUp()
+	/*protected void PopUp()
 	{
 		float screenWidth = (float)Screen.width;
 		float screenHeight = (float)Screen.height;
@@ -452,7 +451,7 @@ public class gameMain : MonoBehaviour
 		generalText.GetComponent<Renderer>().material = textMaterial;
 		generalText.transform.position = new Vector3(0.25f, 1.5f, -4f);
 		generalText.transform.localScale = generalSizing;
-	}
+	}*/
 	#endregion
 	
 	#region Public Methods

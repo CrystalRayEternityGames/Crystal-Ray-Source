@@ -1,70 +1,40 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class score : MonoBehaviour {
 
 	#region Fields
-	
-	public Font gameFont;
-	public Material textMaterial;
-	Vector3 generalSizing;
-	GameObject playerScore = null;
-	GameObject highScore = null;
-	GameObject globalData = null;
-	int current, high;
-	
+
+	public Text[] texts;
+	public Canvas canvas;
+	GameObject globalData;
+
 	#endregion
-	
+
 	#region Private Methods
-	
+
 	/// <summary>
 	/// Start this instance.
 	/// </summary>
 	void Start()
 	{
-		playerScore = new GameObject();
-		playerScore.AddComponent<TextMesh>();
-		highScore = new GameObject();
-		highScore.AddComponent<TextMesh>();
-		generalSizing = new Vector3(0.05f,0.05f,0f);
+		//Sets Global Data
 		globalData = GameObject.FindGameObjectWithTag("Global");
 		if (globalData == null) {
 			globalData = new GameObject();
 			globalData.AddComponent<gameVariables>();
 			globalData.tag = "Global";
 		}
-		current = globalData.GetComponent<gameVariables>().GetSetLevelsCompleted;
-		high = PlayerPrefs.GetInt("Score");
+		//Grabs the Children text under the GameObject
+		texts = canvas.gameObject.GetComponentsInChildren <Text> ();
 
-		var p = new Vector3(-4.5f, 4.5f, 1f);
-		var height = 0.7f;
-		GenerateScore(playerScore, "Current: " + current.ToString(), "Current score string", p);
-		GenerateScore(highScore, "High Score: " + high.ToString(), "High score string", new Vector3(p.x,p.y-height,p.z));
+		//Sets text of Current Score
+		texts[0].text = "Current: " + globalData.GetComponent<gameVariables>().GetSetLevelsCompleted.ToString();
+
+		//Sets text of High Score
+		texts[1].text = "High Score: " + PlayerPrefs.GetInt("Score").ToString();
 	}
 
-	//Easy way to get something to wait
-	IEnumerator wait(float seconds)
-	{
-		yield return new WaitForSeconds(seconds);
-		}
-	
-	/// <summary>
-	/// Generates the score.
-	/// </summary>
-	void GenerateScore(GameObject obj, string str, string name, Vector3 pos)
-	{
-		obj.GetComponent<TextMesh>().text = str;
-		obj.GetComponent<TextMesh>().font = gameFont;
-		obj.GetComponent<TextMesh>().fontSize = 100;
-		obj.GetComponent<TextMesh>().alignment = TextAlignment.Left;
-		obj.GetComponent<TextMesh>().anchor = TextAnchor.UpperLeft;
-		obj.GetComponent<Renderer>().material = textMaterial;
-		obj.transform.SetParent (transform);
-		obj.layer = gameObject.layer;
-		obj.name = name;
-		obj.transform.localPosition = pos;//(Screen.width/16/9) * 2f,(Screen.height/16/9) * 2.7f,0f);
-		obj.transform.localScale = generalSizing;
-	}
-	
 	#endregion
 }

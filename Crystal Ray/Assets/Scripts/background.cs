@@ -16,11 +16,9 @@ public class background : MonoBehaviour {
 
 		Texture backgroundImage = Resources.Load("Images/background")as Texture;
 		plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-		plane.transform.SetParent (transform);
-		plane.layer = gameObject.layer;
-		plane.GetComponent<Renderer>().transform.localPosition = new Vector3(0f, 0f, 1f);
+		plane.GetComponent<Renderer>().transform.position = new Vector3(0f, 1f, 4);
 		plane.GetComponent<Renderer>().transform.Rotate(270f,0f,0f);//If you want it flipped to be something normal: (90f, 180f,0f);
-		plane.GetComponent<Renderer> ().transform.localScale = new Vector3 (screenWidth / screenHeight, 1f, 1f);// * 16 / 9, 1f, screenWidth / screenHeight);//.65f);
+		plane.GetComponent<Renderer>().transform.localScale = new Vector3(screenWidth / screenHeight * 16 / 9, 1f, screenWidth / screenHeight);//.65f);
 		//plane.renderer.transform.localScale = new Vector3(3.5f * 9.0f / 16.0f * screenWidth / screenHeight, 3f * 9.0f / 16.0f * screenWidth / screenHeight, 1.65f);
 		plane.GetComponent<Renderer>().material.mainTexture = backgroundImage;
 	}

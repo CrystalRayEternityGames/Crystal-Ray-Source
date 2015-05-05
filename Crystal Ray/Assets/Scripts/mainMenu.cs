@@ -5,52 +5,88 @@ public class mainMenu : MonoBehaviour {
 
 	#region Fields
 
-	public bool startGame = false;
-	public bool tutorial = false;
-    public bool endlessMode = false;
-	public bool credits = false;
-	public AudioClip menuSelect;
+	public GameObject introGUI;
+	public GameObject menuGUI;
+	public GameObject tutorialGUI;
+	public GameObject creditGUI;
 
 	#endregion
 
+	#region Public Methods
+
+	/// <summary>
+	/// Changes the level.
+	/// </summary>
+	/// <param name="name">Name.</param>
+	public void ChangeLevel(string name)
+	{
+		//GetComponent<AudioSource>().PlayOneShot(menuSelect);
+		if(name == "gameWorld" || name == "endlessMode" || name == "tutorial")
+		{
+			Application.LoadLevel(name);
+		}
+		else
+		{
+			menuGUI.SetActive(false);
+			if(name == "credits")
+			{
+				creditGUI.SetActive(true);
+			}
+			//For new tutotrial
+			/*else if(name == "tutorial")
+			{
+				tutorialGUI.SetActive(true);
+			}*/
+		}
+	}
+
+	/// <summary>
+	/// Back this instance.
+	/// </summary>
+	public void Back()
+	{
+		if(tutorialGUI.activeSelf == true)
+		{
+			tutorialGUI.SetActive(false);
+		}
+		else
+		{
+			creditGUI.SetActive(false);
+		}
+
+		menuGUI.SetActive(true);
+	}
+
+	#endregion
+	
 	#region Private Methods
 
-	//Mouse Enters a Box Collider
-	void OnMouseEnter()
+	/// <summary>
+	/// Threads the start.
+	/// </summary>
+	/// <returns>The start.</returns>
+	IEnumerator ThreadStart()
 	{
-		GetComponent<Renderer>().material.color = Color.cyan;
+		yield return StartCoroutine(ChangeScene());
+		menuGUI.SetActive(true);
+		introGUI.SetActive(false);
 	}
-	//Mouse Leaves a Box Collider
-	void OnMouseExit()
+
+	/// <summary>
+	/// Changes the scene.
+	/// </summary>
+	/// <returns>The scene.</returns>
+	IEnumerator ChangeScene()
 	{
-		GetComponent<Renderer>().material.color = Color.white;
+		yield return new WaitForSeconds(3f);
 	}
-	//Mouse Clicks a Box Collider
-	void OnMouseDown()
+
+	/// <summary>
+	/// Start this instance.
+	/// </summary>
+	void Start()
 	{
-		//Start Game
-		if(startGame)
-		{
-			GetComponent<AudioSource>().PlayOneShot(menuSelect);
-			Application.LoadLevel("gameWorld");
-		}
-        else if (endlessMode)
-        {
-            GetComponent<AudioSource>().PlayOneShot(menuSelect);
-            Application.LoadLevel("endlessMode");
-        }
-        //Tutorial
-        else if (tutorial)
-        {
-            GetComponent<AudioSource>().PlayOneShot(menuSelect);
-            Application.LoadLevel("tutorial");
-        }
-        //Credits
-        else if (credits)
-        {
-            GetComponent<AudioSource>().PlayOneShot(menuSelect);
-            Application.LoadLevel("credits");
-        }
+		StartCoroutine(ThreadStart());
 	}
 
 	#endregion

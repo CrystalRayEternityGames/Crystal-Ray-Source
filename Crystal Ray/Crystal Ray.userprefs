@@ -1,20 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\score.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\gameMain.cs">
     <Files>
-      <File FileName="Assets\Scripts\pathCreation_unused.cs" Line="100" Column="7" />
-      <File FileName="Assets\Scripts\gameMain.cs" Line="345" Column="22" />
-      <File FileName="Assets\Scripts\background.cs" Line="23" Column="105" />
-      <File FileName="Assets\Scripts\mainMenu.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\crystal.cs" Line="62" Column="4" />
-      <File FileName="Assets\Scripts\score.cs" Line="40" Column="19" />
-      <File FileName="c:\Users\Jade\Documents\GitHub\Crystal-Ray-Source\Crystal Ray\Assets\Scripts\endlessModeScript.cs" Line="89" Column="1" />
+      <File FileName="Assets\Scripts\score.cs" Line="5" Column="19" />
+      <File FileName="Assets\Scripts\gameMainGUI.cs" Line="20" Column="33" />
+      <File FileName="Assets\Scripts\mainMenu.cs" Line="89" Column="31" />
+      <File FileName="Assets\Scripts\gameVariables.cs" Line="140" Column="1" />
+      <File FileName="Assets\Scripts\gameMain.cs" Line="267" Column="65" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\Jade\Documents\GitHub\Crystal-Ray-Source\Crystal Ray\Assets\Scripts\gameMain.cs" line="346" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

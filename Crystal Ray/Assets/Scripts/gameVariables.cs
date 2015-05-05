@@ -14,6 +14,7 @@ public class gameVariables : MonoBehaviour {
 	public bool gamePlaying = false;
 	public bool getAbleToMove = false;
 	public bool doStart = false;
+	public bool failed = false;
 	#endregion
 
 	#region Private Methods
@@ -125,5 +126,14 @@ public class gameVariables : MonoBehaviour {
 		set{width = value;}
 	}
 
+	/// <summary>
+	/// Gets or sets a value indicating whether this <see cref="gameVariables"/> get set failed.
+	/// </summary>
+	/// <value><c>true</c> if get set failed; otherwise, <c>false</c>.</value>
+	public bool GetSetFailed
+	{
+		get {return failed;}
+		set{GetSetFailed = value;}
+	}
 	#endregion
 }
