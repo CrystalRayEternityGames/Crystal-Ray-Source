@@ -43,28 +43,33 @@ namespace AssemblyCSharp
 			//type = 1;
 		}
 		
-		public crystal(string id, Vector2 nPos, Vector3 nScale)
+		public crystal(string id, Vector2 nPos, Vector2 fieldDimensions, GameObject parent)
 		{
-			//Type: 7% chance of being a void crystal, change later
+			//Type: 7% chance of being a void crystal, change later for smarter generation and conflict resolution?
 			int crystalTypes = Random.Range(0,100);
 			type = crystalTypes < 7 ? 0 : 1;
-			
 			nameId = id;
-			position = nPos;
-			positionOffset = position * 3.0f;
-            positionOffset += new Vector2(-2.5f, -4.5f);
-			scale = new Vector3(1.5f / nScale.x, 1.5f / nScale.y, 1.5f / nScale.z);
 			
-			//Grants Change here
+			//Grants model manager
 			model = AssetManager.GetModels[0];//Resources.Load("Crystals/Prefabs/01_crystal") as GameObject;
+			//Do we have a GetTextures part for it?
 			mat = Resources.Load("Crystals/Materials/Crystal01-Grey", typeof(Material)) as Material;
-			
+
+			//Set get it ready for the world
 			model.GetComponent<Renderer>().material = mat;
 			tesseract = Instantiate(model) as GameObject;
-			tesseract.transform.SetParent (Camera.main.transform);
+			//tesseract.transform.SetParent(Camera.current.transform);
+			tesseract.transform.SetParent (parent.transform);
+			tesseract.layer = parent.layer;
 			tesseract.name = "crystal:"+nameId;
-			
-			tesseract.transform.localPosition = new Vector3(positionOffset.x, positionOffset.y, 1f);
+
+			position = nPos;
+			positionOffset = position * 3.0f;
+			positionOffset += new Vector2(-2.5f, -4.5f);
+			//Since crystals are "tall" objects, width and depth will match
+			//Decisions and math to be made later if we want other creative shapes/ratios
+			scale = new Vector3(1.5f / fieldDimensions.x, 1.5f / fieldDimensions.y, 1.5f / fieldDimensions.x);
+			tesseract.transform.localPosition = new Vector3(positionOffset.x, positionOffset.y, 10f);
 			tesseract.transform.localScale = new Vector3(scale.x, scale.y, scale.z);
 			tesseract.GetComponent<Renderer>().material.color = visitColors[type];
 		}
