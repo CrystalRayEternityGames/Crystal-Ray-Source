@@ -12,7 +12,6 @@ namespace AssemblyCSharp
 		GameObject globalData = null;
 		//bool pressed = false;
 		public Vector2 position;
-		public Vector2 positionOffset;
 		public Vector3 scale;
 		public int type;
 		public int colorIndex = 0;
@@ -63,13 +62,22 @@ namespace AssemblyCSharp
 			tesseract.layer = parent.layer;
 			tesseract.name = "crystal:"+nameId;
 
+			//Array positions
 			position = nPos;
-			positionOffset = position * 3.0f;
-			positionOffset += new Vector2(-2.5f, -4.5f);
+
+			//Bad naming, visual location
+			Vector3 visualPosition = new Vector3 (0.0f, 0.0f, 10.0f);
+			Vector3 positionOffset = new Vector3(position.x + 0.5f - (fieldDimensions.x / 2.0f),
+			                                     position.y + 0.5f - (fieldDimensions.y / 2.0f),
+			                                     0.0f);
+			positionOffset.x *= 8.0f / fieldDimensions.x;
+			positionOffset.y *= 11.0f / fieldDimensions.y;
+			positionOffset += new Vector3(1.5f, 0.0f, 0.0f);
+			visualPosition += positionOffset;
 			//Since crystals are "tall" objects, width and depth will match
 			//Decisions and math to be made later if we want other creative shapes/ratios
 			scale = new Vector3(1.5f / fieldDimensions.x, 1.5f / fieldDimensions.y, 1.5f / fieldDimensions.x);
-			tesseract.transform.localPosition = new Vector3(positionOffset.x, positionOffset.y, 10f);
+			tesseract.transform.localPosition = visualPosition;
 			tesseract.transform.localScale = new Vector3(scale.x, scale.y, scale.z);
 			tesseract.GetComponent<Renderer>().material.color = visitColors[type];
 		}

@@ -122,7 +122,6 @@ public class gameMain : MonoBehaviour
 		int currentLevel = (int)Mathf.Round(globalData.GetComponent<gameVariables>().GetSetLevelsCompleted * 0.5f) + 1;
 		
 		//Generate until not on a void, if infinite loop, all ledges are void...
-		while(generatedPath.Count < 1)
 		{
 			//starting edge
 			int startSide = Random.Range(0,3);
@@ -141,7 +140,7 @@ public class gameMain : MonoBehaviour
 		int[] triedDirections = new int[] {0,0,0,0};
 		
 		//Start traveling
-		while(currentLevel > 0)
+		while(currentLevel > 0 && fieldHeight > 1 && fieldWidth > 1)
 		{
 			bool good = true;
 			Vector2 currentPosition = generatedPath[generatedPath.Count-1].position;
@@ -310,9 +309,9 @@ public class gameMain : MonoBehaviour
 			increaseWidth = 2;
 			increaseHeight = 2;
 		}
-		
-		fieldHeight = 4 + increaseHeight;
-		fieldWidth = 4 + increaseWidth;
+		int lazymansNumber = 7;
+		fieldHeight = lazymansNumber + increaseHeight;
+		fieldWidth = lazymansNumber + increaseWidth;
 		timer = Random.Range(0.5f - timeDecrease, 0.7f - timeDecrease);
 	}
 	
