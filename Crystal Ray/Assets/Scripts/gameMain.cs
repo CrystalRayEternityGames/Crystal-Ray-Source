@@ -28,7 +28,7 @@ public class gameMain : MonoBehaviour
 	protected GameObject globalData = null;
 	//protected List<GameObject> generatedPath = new List<GameObject>();
 	//protected List<GameObject> playerPath = new List<GameObject>();
-	protected GameObject current = null;
+	protected crystal current = null;
 	int playerProgress = 0;
 	//protected Color[] visitColors = new Color[] {Color.green, Color.red, Color.magenta, Color.yellow, orange};
 	protected bool started = false;
@@ -96,7 +96,7 @@ public class gameMain : MonoBehaviour
 				
 				//Handle scaling
 				var dimensions = new Vector2((float)fieldWidth,(float)fieldHeight);
-				
+
 				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), dimensions, gameObject);
 
 				/*
@@ -254,7 +254,7 @@ public class gameMain : MonoBehaviour
 					globalData.GetComponent<gameVariables>().GetSetLevelsCompleted += 1;
 					Application.LoadLevel("gameWorld");
 				}
-				current = usedCrystal.gameObject;
+				current = usedCrystal;
 				playerProgress++;
 				//Bad move
 			} else {
@@ -309,7 +309,7 @@ public class gameMain : MonoBehaviour
 			increaseWidth = 2;
 			increaseHeight = 2;
 		}
-		int lazymansNumber = 7;
+		int lazymansNumber = 8;
 		fieldHeight = lazymansNumber + increaseHeight;
 		fieldWidth = lazymansNumber + increaseWidth;
 		timer = Random.Range(0.5f - timeDecrease, 0.7f - timeDecrease);
@@ -340,6 +340,9 @@ public class gameMain : MonoBehaviour
 		var temp = Camera.main.gameObject.transform.localScale;//this.gameObject.transform.localScale;
 		foreach (Camera cam in Camera.allCameras)
 						cam.aspect = 1;
+
+		foreach (crystal crys in field)
+			crys.Update ();
 
 		if (Input.GetKey(KeyCode.Escape)) 
 		{

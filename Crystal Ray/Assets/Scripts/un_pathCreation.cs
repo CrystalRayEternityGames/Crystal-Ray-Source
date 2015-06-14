@@ -28,7 +28,7 @@ public class pathCreation_unused : MonoBehaviour
 	protected GameObject globalData = null;
 	//protected List<GameObject> generatedPath = new List<GameObject>();
 	//protected List<GameObject> playerPath = new List<GameObject>();
-	protected GameObject current = null;
+	protected crystal current = null;
 	int playerProgress = 0;
 	//protected Color[] visitColors = new Color[] {Color.green, Color.red, Color.magenta, Color.yellow, orange};
 	protected bool started = false;
@@ -285,7 +285,7 @@ public class pathCreation_unused : MonoBehaviour
 					globalData.GetComponent<gameVariables>().GetSetLevelsCompleted += 1;
 					Application.LoadLevel("gameWorld");
 				}
-				current = usedCrystal.gameObject;
+				current = usedCrystal;
 				playerProgress++;
 				//Bad move
 			} else {

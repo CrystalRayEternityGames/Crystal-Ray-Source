@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace AssemblyCSharp
 {
-	public class crystal : MonoBehaviour
+	public class crystal
 	{
 		//public crystal
 		//{
@@ -21,6 +21,7 @@ namespace AssemblyCSharp
 		public Material mat;
 		public GameObject tesseract;
 		public int colorInt = 0;
+		public Vector3 rotationAngle;
 		//Colors
 		protected Color[] visitColors = new Color[] {
 			Color.gray, //Dark grey
@@ -56,30 +57,37 @@ namespace AssemblyCSharp
 
 			//Set get it ready for the world
 			model.GetComponent<Renderer>().material = mat;
-			tesseract = Instantiate(model) as GameObject;
+			tesseract = GameObject.Instantiate(model) as GameObject;
 			//tesseract.transform.SetParent(Camera.current.transform);
 			tesseract.transform.SetParent (parent.transform);
 			tesseract.layer = parent.layer;
 			tesseract.name = "crystal:"+nameId;
 
+			//rotationAngle = new Vector3(Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f);
+			rotationAngle = new Vector3(0.0f, 1.0f, 0.0f);
+
 			//Array positions
 			position = nPos;
 
+			float multiplier = 1.0f;
+
 			//Bad naming, visual location
-			Vector3 visualPosition = new Vector3 (0.0f, 0.0f, 10.0f);
+			Vector3 visualPosition = new Vector3 (0.0f, 0.0f, 10.0f * multiplier);
 			Vector3 positionOffset = new Vector3(position.x + 0.5f - (fieldDimensions.x / 2.0f),
 			                                     position.y + 0.5f - (fieldDimensions.y / 2.0f),
 			                                     0.0f);
-			positionOffset.x *= 8.0f / fieldDimensions.x;
-			positionOffset.y *= 11.0f / fieldDimensions.y;
-			positionOffset += new Vector3(1.5f, 0.0f, 0.0f);
+			positionOffset.x *= 8.0f / fieldDimensions.x * multiplier;
+			positionOffset.y *= 11.0f / fieldDimensions.y * multiplier;
+			positionOffset += new Vector3(1.5f, 0.0f, 0.0f) * multiplier;
 			visualPosition += positionOffset;
 			//Since crystals are "tall" objects, width and depth will match
 			//Decisions and math to be made later if we want other creative shapes/ratios
 			scale = new Vector3(1.5f / fieldDimensions.x, 1.5f / fieldDimensions.y, 1.5f / fieldDimensions.x);
+			scale *= multiplier;
 			tesseract.transform.localPosition = visualPosition;
 			tesseract.transform.localScale = new Vector3(scale.x, scale.y, scale.z);
 			tesseract.GetComponent<Renderer>().material.color = visitColors[type];
+			tesseract.transform.Rotate(new Vector3(-45.0f, 0.0f, 0.0f));
 		}
 		
 		public void traveled()
@@ -118,11 +126,16 @@ namespace AssemblyCSharp
 		/// <summary>
 		/// Update this instance.
 		/// </summary>
-		void Update () 
+		public void Update () 
 		{
 			//Todo: Draw the tesseract
-			
-			
+
+			//tesseract.transform.Rotate(new Vector3(Random.Range(0.0f,1.0f)-0.5f, Random.Range(0.0f,1.0f)-0.5f, Random.Range(0.0f,1.0f)-0.5f) * Time.deltaTime * 40.0f);
+
+
+
+			tesseract.transform.Rotate(rotationAngle * Time.deltaTime * 30.0f);
+
 			/*if(Input.GetMouseButtonDown(0))
 			{
 				pressed = true;

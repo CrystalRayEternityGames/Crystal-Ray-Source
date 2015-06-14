@@ -24,7 +24,7 @@ public class endlessModeScript : gameMain
         {
             generatedPath[i].type = 0;
             //generatedPath[i].renderer.material.color = Color.cyan;
-            Destroy(generatedPath[i].GetComponent<ParticleSystem>());
+            Destroy(generatedPath[i].tesseract.GetComponent<ParticleSystem>());
         }
 
         playerPath.ForEach(crst => 
@@ -32,7 +32,7 @@ public class endlessModeScript : gameMain
             
             crst.type = 1;
             //crst.renderer.material.color = Color.cyan;
-            Destroy(crst.GetComponent<ParticleSystem>());
+            Destroy(crst.tesseract.GetComponent<ParticleSystem>());
         });
 
         while (!generatePath())
