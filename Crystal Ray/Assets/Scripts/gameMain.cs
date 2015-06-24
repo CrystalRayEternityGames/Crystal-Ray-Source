@@ -19,21 +19,21 @@ public class gameMain : MonoBehaviour
 	public crystal[,] field;
 	public List<int> indexX = new List<int>();
 	public List<int> indexY = new List<int>();
+	public Vector2 mousePos = new Vector2(-1f, -1f);
+	protected Vector2 lastPos = new Vector2 (-1f, -1f);
 	protected List<crystal> generatedPath = new List<crystal>();
 	protected List<crystal> playerPath = new List<crystal>();
 	
 	//End such shinanigens
-	
-	//protected GameObject crystal = null;
+
 	protected GameObject globalData = null;
 	//protected List<GameObject> generatedPath = new List<GameObject>();
 	//protected List<GameObject> playerPath = new List<GameObject>();
 	protected crystal current = null;
 	int playerProgress = 0;
-	//protected Color[] visitColors = new Color[] {Color.green, Color.red, Color.magenta, Color.yellow, orange};
 	protected bool started = false;
 	
-	protected int fieldWidth; 
+	protected int fieldWidth;
 	protected int fieldHeight;
 	protected float scaleWidth;
 	protected Vector2 fieldOffset;
@@ -76,35 +76,17 @@ public class gameMain : MonoBehaviour
 		indexReset(indexY, fieldHeight);
 		field = new crystal[fieldWidth, fieldHeight];
 		
-		//Todo, impliment max values
-		//field = new GameObject[fieldWidth, fieldHeight];
-		
-		//Enforce aspect ratio of 16/9
-		//int widerSide = screenWidth/16.0f < screenHeight/9.0f ? 0 : 1;
-		
 		//Create the grid
 		//Doing <= so we can use fieldWidth and such without -1
 		for (int i = 0; i < fieldWidth; i++) {
 			for (int j = 0; j < fieldHeight; j++) {
-				
-				//Arguments: name, position, scale
-				
 				//Name
 				pass++;
 				
 				//Position just uses i and j indexes, adjusting position will be handled by each crystal
-				
-				//Handle scaling
 				var dimensions = new Vector2((float)fieldWidth,(float)fieldHeight);
 
 				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), dimensions, gameObject);
-
-				/*
-				float scaleWidth = 9f / fieldWidth * crystalScale;// * screenWidth / 1360f;
-				float scaleHeight =  9f / fieldHeight * crystalScale;// * screenHeight / 740f;
-				field[i, j].transform.position = new Vector3(((i - (fieldWidth / 1f) + 1f) * scaleWidth) + fieldOffset.x, ((j - (fieldHeight / 2f) + 1f) * scaleHeight) + fieldOffset.y, 0);
-				field[i, j].transform.localScale = new Vector3(scaleWidth / 6.0f, scaleHeight / 6.0f, (scaleWidth + scaleHeight)/3f / 6.0f);
-				*/
 			}
 		}
 		
@@ -309,7 +291,7 @@ public class gameMain : MonoBehaviour
 			increaseWidth = 2;
 			increaseHeight = 2;
 		}
-		int lazymansNumber = 8;
+		int lazymansNumber = 6;
 		fieldHeight = lazymansNumber + increaseHeight;
 		fieldWidth = lazymansNumber + increaseWidth;
 		timer = Random.Range(0.5f - timeDecrease, 0.7f - timeDecrease);
@@ -343,6 +325,23 @@ public class gameMain : MonoBehaviour
 
 		foreach (crystal crys in field)
 			crys.Update ();
+
+		//RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+		Vector2 min = field [indexX.FirstOrDefault(), indexY.FirstOrDefault()].tesseract.transform.position;
+		Vector2 max = field [indexX.LastOrDefault(), indexY.LastOrDefault()].tesseract.transform.position;
+
+		mousePos.x = Camera.main.ScreenToWorldPoint (Input.mousePosition).x - min.x;
+		mousePos.x = Mathf.Floor((mousePos.x / (max.x - min.x) * (fieldWidth - 1.0f)) + 0.5f);
+		mousePos.y = Camera.main.ScreenToWorldPoint (Input.mousePosition).y - min.y;
+		mousePos.y = Mathf.Floor((mousePos.y / (max.y - min.y) * (fieldHeight - 1.0f)) + 0.5f);
+
+		if(mousePos.x >= 0 && mousePos.x < fieldWidth && mousePos.y >= 0 && mousePos.y < fieldHeight)
+			if(mousePos.x != lastPos.x || mousePos.y != lastPos.y)
+				field [indexX [(int)mousePos.x], indexY[(int)mousePos.y]].traveled ();
+
+		lastPos.x = mousePos.x + 0.0f;
+		lastPos.y = mousePos.y + 0.0f;
 
 		if (Input.GetKey(KeyCode.Escape)) 
 		{
@@ -393,84 +392,9 @@ public class gameMain : MonoBehaviour
 		
 		ableToMove = true;
 	}
-	
-	/*protected void PopUp()
-	{
-		float screenWidth = (float)Screen.width;
-		float screenHeight = (float)Screen.height;
-		GameObject plane;
-		Vector3 generalSizing = new Vector3(0.05f,0.05f,0f);
-		GameObject menu = new GameObject();
-		menu.AddComponent<TextMesh>();
-		menu.AddComponent<BoxCollider>();
-		menu.AddComponent<popupBack>();
-		menu.AddComponent<AudioSource>();
-		GameObject restartGame = new GameObject();
-		restartGame.AddComponent<TextMesh>();		
-		restartGame.AddComponent<BoxCollider>();
-		restartGame.AddComponent<restart>();
-		restartGame.AddComponent<AudioSource>();
-		GameObject generalText = new GameObject();
-		generalText.AddComponent<TextMesh>();	
-		
-		plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-		plane.GetComponent<Renderer>().transform.position = new Vector3(0f, 1f, -3.8f);
-		plane.GetComponent<Renderer>().transform.Rotate(270f,0f,0f);
-		plane.GetComponent<Renderer>().transform.localScale = new Vector3((screenWidth / screenHeight * 16 / 9) * .15f, 1f, (screenWidth / screenHeight) * .15f);
-		plane.GetComponent<Renderer>().material.color = Color.gray;
-		
-		menu.GetComponent<TextMesh>().text = "Main Menu";
-		menu.GetComponent<TextMesh>().font = gameFont;
-		menu.GetComponent<TextMesh>().color = Color.white;
-		menu.GetComponent<TextMesh>().fontSize = 80;
-		menu.GetComponent<TextMesh>().alignment = TextAlignment.Left;
-		menu.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
-		menu.GetComponent<BoxCollider>().size = new Vector3(50f, 10f, 0f);
-		menu.GetComponent<BoxCollider>().center = new Vector3(0f,1f,2f);
-		menu.GetComponent<Renderer>().material = textMaterial;
-		menu.transform.position = new Vector3(-1f, 0f, -4f);
-		menu.transform.localScale = generalSizing;
-		
-		restartGame.GetComponent<TextMesh>().text = "Restart";
-		restartGame.GetComponent<TextMesh>().font = gameFont;
-		restartGame.GetComponent<TextMesh>().color = Color.white;
-		restartGame.GetComponent<TextMesh>().fontSize = 80;
-		restartGame.GetComponent<TextMesh>().alignment = TextAlignment.Left;
-		restartGame.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
-		restartGame.GetComponent<BoxCollider>().size = new Vector3(50f, 10f, 0f);
-		restartGame.GetComponent<BoxCollider>().center = new Vector3(0f,1f,2f);
-		restartGame.GetComponent<Renderer>().material = textMaterial;
-		restartGame.transform.position = new Vector3(1.5f, 0f, -4f);
-		restartGame.transform.localScale = generalSizing;
-		
-		generalText.GetComponent<TextMesh>().text = "Wrong Path Crystal!";
-		generalText.GetComponent<TextMesh>().font = gameFont;
-		generalText.GetComponent<TextMesh>().color = Color.white;
-		generalText.GetComponent<TextMesh>().fontSize = 70;
-		generalText.GetComponent<TextMesh>().alignment = TextAlignment.Left;
-		generalText.GetComponent<TextMesh>().anchor = TextAnchor.MiddleCenter;
-		generalText.GetComponent<Renderer>().material = textMaterial;
-		generalText.transform.position = new Vector3(0.25f, 1.5f, -4f);
-		generalText.transform.localScale = generalSizing;
-	}*/
+
 	#endregion
-	
-	#region Public Methods
-	
-	/// <summary>
-	/// Instance this instance.
-	/// </summary>
-	/*public new static pathCreation Instance()
-	{
-		if(!instance)
-		{
-			instance = GameObject.FindObjectOfType(typeof(pathCreation)) as pathCreation;
-		}
-		return instance;
-	}*/
-	
-	#endregion
-	
+
 	#region Properties
 	
 	/// <summary>

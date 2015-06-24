@@ -20,13 +20,14 @@ namespace AssemblyCSharp
 		public GameObject model;
 		public Material mat;
 		public GameObject tesseract;
-		public int colorInt = 0;
+		public int colorInt = 1;
 		public Vector3 rotationAngle;
 		//Colors
 		protected Color[] visitColors = new Color[] {
 			Color.gray, //Dark grey
 			Color.cyan, Color.green, Color.red, Color.magenta, Color.yellow,
-			new Color(255,165,0)}; //Orange
+			Color.white, Color.blue, Color.black};
+			//new Color(255,165,0)}; //Orange
 		#endregion
 		
 		#region Private Methods
