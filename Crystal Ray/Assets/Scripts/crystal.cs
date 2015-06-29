@@ -9,7 +9,7 @@ namespace AssemblyCSharp
 		//{
 		#region Fields
 		
-		GameObject globalData = null;
+		GameObject globalData;
 		//bool pressed = false;
 		public Vector2 position;
 		public Vector3 scale;

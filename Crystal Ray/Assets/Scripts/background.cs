@@ -4,7 +4,7 @@ using System.Collections;
 public class background : MonoBehaviour {
 	
 	GameObject plane = null;
-	GameObject globalData = null;
+	GameObject globalData;
 
 	// Use this for initialization
 	void Start() 

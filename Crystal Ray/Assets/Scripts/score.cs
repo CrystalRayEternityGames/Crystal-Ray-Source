@@ -25,6 +25,7 @@ public class score : MonoBehaviour {
 			globalData = new GameObject();
 			globalData.AddComponent<gameVariables>();
 			globalData.tag = "Global";
+			globalData.name = "Global Data";
 		}
 		//Grabs the Children text under the GameObject
 		texts = canvas.gameObject.GetComponentsInChildren <Text> ();
