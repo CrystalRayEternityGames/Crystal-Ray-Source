@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AssemblyCSharp;
+using System;
+using Random = UnityEngine.Random;
 
 public class gameMain : MonoBehaviour
 {
@@ -15,10 +17,12 @@ public class gameMain : MonoBehaviour
 	//private static pathCreation instance = null;
 	
 	//Begin the ackwarding
-	
-	public crystal[,] field;
-	public List<int> indexX = new List<int>();
-	public List<int> indexY = new List<int>();
+
+	//Columns then rows
+	public Dictionary<Guid, Dictionary<Guid, crystal>> field;
+	object fieldLock = new object ();
+	public List<Guid> indexX = new List<Guid>();
+	public List<Guid> indexY = new List<Guid>();
 	public Vector2 mousePos = new Vector2(-1f, -1f);
 	protected Vector2 lastPos = new Vector2 (-1f, -1f);
 	protected List<crystal> generatedPath = new List<crystal>();
@@ -32,9 +36,9 @@ public class gameMain : MonoBehaviour
 	protected crystal current = null;
 	int playerProgress = 0;
 	protected bool started = false;
+	protected bool additionMade = false;
 	
-	protected int fieldWidth;
-	protected int fieldHeight;
+	protected Vector2 fieldSize;
 	protected float scaleWidth;
 	protected Vector2 fieldOffset;
 	protected int pass = 0;
@@ -50,13 +54,16 @@ public class gameMain : MonoBehaviour
 	/// <summary>
 	/// Resets the index lists
 	/// </summary>
-	private void indexReset(List<int> index, int fSize)
+	private void indexReset(List<Guid> index, float fSize)
 	{
-		//Empty index, refill with 0 to fSize
 		index.Clear();
 		for(int i = 0; i < fSize; i++)
 		{
-			index.Add (i);
+			Guid t = Guid.NewGuid();
+			while(index.Contains(t))
+				t = Guid.NewGuid();
+
+			index.Add (t);
 		}
 	}
 	
@@ -68,31 +75,93 @@ public class gameMain : MonoBehaviour
 	#endif
 	protected void CreateField ()
 	{
-		float screenWidth = (float)Screen.width;
-		float screenHeight = (float)Screen.height;
-		
-		//Clear the x and y indexes
-		indexReset(indexX, fieldWidth);
-		indexReset(indexY, fieldHeight);
-		field = new crystal[fieldWidth, fieldHeight];
-		
-		//Create the grid
-		//Doing <= so we can use fieldWidth and such without -1
-		for (int i = 0; i < fieldWidth; i++) {
-			for (int j = 0; j < fieldHeight; j++) {
-				//Name
-				pass++;
-				
-				//Position just uses i and j indexes, adjusting position will be handled by each crystal
-				var dimensions = new Vector2((float)fieldWidth,(float)fieldHeight);
+		lock (fieldLock) {
+			//Clear the x and y indexes
+			indexReset (indexX, fieldSize.x);
+			indexReset (indexY, fieldSize.y);
 
-				field[indexX[i], indexY[j]] = new crystal(pass.ToString(), new Vector2(indexX[i], indexY[j]), dimensions, gameObject);
+			//Create the grid
+			//Doing <= so we can use fieldWidth and such without -1
+			for (int i = 0; i < fieldSize.x; i++) {
+				for (int j = 0; j < fieldSize.y; j++) {
+					//Name
+					pass++;
+
+					//Clear nulls
+					if (field == null)
+						field = new Dictionary<Guid, Dictionary<Guid, crystal>> ();
+					if (!field.ContainsKey (indexX [i]))
+						field [indexX [i]] = new Dictionary<Guid, crystal> ();
+					//Add the crystal
+					field [indexX [i]] [indexY [j]] = new crystal (pass.ToString (), new Vector2 (i, j), fieldSize, gameObject);
+				}
 			}
-		}
 		
-		//Generate Path
-		while(!generatePath())
-			continue;
+			//Generate Path
+			while (!generatePath())
+				continue;
+		}
+	}
+
+	protected void addRows(int index = -1, int numb = 1)
+	{
+		lock (fieldLock) {
+			for(int i = 0; i < numb; i++)
+			{
+				Guid t = Guid.NewGuid();
+				while(indexY.Contains(t))
+					t = Guid.NewGuid();
+				//Insert if index given
+				if(index >= 0)
+				{
+					indexY.Insert(index+i, t);
+				}
+				//Otherwise add to the end
+				else
+				{
+					indexY.Add(t);
+				}
+				fieldSize.y++;
+				field.Keys.ToList().ForEach(ind=>
+				                            field[ind][t] = new crystal("Newly made",
+				                                    new Vector2(indexX.IndexOf(ind),indexY.IndexOf(t)),
+				                                    fieldSize,
+				                                    gameObject));
+			}
+
+			foreach (var p in field)
+				foreach (var crys in p.Value)
+					crys.Value.fixPosition(new Vector2(indexX.IndexOf(p.Key), indexY.IndexOf(crys.Key)), fieldSize);
+		}
+	}
+
+	protected void addColumns(int index = -1, int numb = 1)
+	{
+		lock (fieldLock) {
+			for(int i = 0; i < numb; i++)
+			{
+				Guid t = Guid.NewGuid();
+				while(indexX.Contains(t))
+					t = Guid.NewGuid();
+				//Insert if index given
+				if(index >= 0)
+				{
+					indexX.Insert(index+i, t);
+				}
+				//Otherwise add to the end
+				else
+				{
+					indexX.Add(t);
+				}
+				fieldSize.x++;
+				field[t] = new Dictionary<Guid, crystal>();
+				field[indexX[index > 0 ? 0 : 1]].Keys.ToList().ForEach(ind=>field[t][ind] = new crystal("Newly made", new Vector2(indexX.IndexOf(t),indexY.IndexOf(ind)), fieldSize, gameObject));
+			}
+			
+			foreach (var p in field)
+				foreach (var crys in p.Value)
+					crys.Value.fixPosition(new Vector2(indexX.IndexOf(p.Key), indexY.IndexOf(crys.Key)), fieldSize);
+		}
 	}
 	
 	public bool generatePath()
@@ -108,13 +177,13 @@ public class gameMain : MonoBehaviour
 			//starting edge
 			int startSide = Random.Range(0,3);
 			//Get start point for the side, % 2 to see if we go height or width for odd or even
-			int startPoint = Random.Range(0, startSide % 2 == 0 ? fieldHeight : fieldWidth);
+			int startPoint = (int)Random.Range(0, startSide % 2 == 0 ? fieldSize.y : fieldSize.x);
 			//0 = right, 1 = top, 2 = left, 3 = up
-			int x = startSide % 2 == 0 ? startSide == 0 ? fieldWidth - 1 : 0 : startPoint;
-			int y = startSide % 2 == 0 ? startPoint : startSide == 1 ? 0 : fieldHeight - 1;
+			int x = startSide % 2 == 0 ? startSide == 0 ? (int)fieldSize.x - 1 : 0 : startPoint;
+			int y = startSide % 2 == 0 ? startPoint : startSide == 1 ? 0 : (int)fieldSize.y - 1;
 			//Start the path on the correct point
-			if(field[indexX[x],indexY[y]].type != 0)
-				generatedPath.Add(field[indexX[x],indexY[y]]);
+			if(field[indexX[x]][indexY[y]].type != 0)
+				generatedPath.Add(field[indexX[x]][indexY[y]]);
 		}
 		
 		//Pick starting direction
@@ -122,7 +191,7 @@ public class gameMain : MonoBehaviour
 		int[] triedDirections = new int[] {0,0,0,0};
 		
 		//Start traveling
-		while(currentLevel > 0 && fieldHeight > 1 && fieldWidth > 1)
+		while(currentLevel > 0 && fieldSize.y > 1 && fieldSize.x > 1)
 		{
 			bool good = true;
 			Vector2 currentPosition = generatedPath[generatedPath.Count-1].position;
@@ -156,7 +225,7 @@ public class gameMain : MonoBehaviour
 			//If no issues with picked direction, move forward, get new direction
 			if(good)
 			{
-				generatedPath.Add(field[indexX[(int)currentPosition.x], indexY[(int)currentPosition.y]]);
+				generatedPath.Add(field[indexX[(int)currentPosition.x]][indexY[(int)currentPosition.y]]);
 				currentDirection = getDirection(currentDirection, triedDirections);
 				triedDirections = new int[] {0,0,0,0};
 				currentLevel--;
@@ -176,9 +245,9 @@ public class gameMain : MonoBehaviour
 	{
 		if (posCheck.x < 0 || posCheck.y < 0)
 			return false;
-		if ((int)posCheck.x >= fieldWidth || (int)posCheck.y >= fieldHeight)
+		if ((int)posCheck.x >= fieldSize.x || (int)posCheck.y >= fieldSize.y)
 			return false;
-		if (field [(int)posCheck.x, (int)posCheck.y].type == 0)
+		if (field [indexX[(int)posCheck.x]][indexY[(int)posCheck.y]].type == 0)
 			return false;
 		return true;
 	}
@@ -250,13 +319,6 @@ public class gameMain : MonoBehaviour
 		}
 	}
 	
-	//Start the game
-	//Jade reminder: Handle this
-	public void doStart()
-	{
-		started = true;
-	}
-	
 	/// <summary>
 	/// Sets the variables for difficulties.
 	/// </summary>
@@ -292,8 +354,8 @@ public class gameMain : MonoBehaviour
 			increaseHeight = 2;
 		}
 		int lazymansNumber = 6;
-		fieldHeight = lazymansNumber + increaseHeight;
-		fieldWidth = lazymansNumber + increaseWidth;
+		fieldSize.y = lazymansNumber + increaseHeight;
+		fieldSize.x = lazymansNumber + increaseWidth;
 		timer = Random.Range(0.5f - timeDecrease, 0.7f - timeDecrease);
 	}
 	
@@ -319,29 +381,49 @@ public class gameMain : MonoBehaviour
 	protected virtual void Update ()
 	{
 		scaleWidth = (float)Screen.width / (float)Screen.height * 0.8f; //0.8 is reverse of 5:4 ratio, 60f is camera default fieldofview
-		var temp = Camera.main.gameObject.transform.localScale;//this.gameObject.transform.localScale;
 		foreach (Camera cam in Camera.allCameras)
 						cam.aspect = 1;
 
-		foreach (crystal crys in field)
-			crys.Update ();
+		foreach (Dictionary<Guid, crystal> row in field.Values)
+			foreach (crystal crys in row.Values)
+				crys.Update ();
 
 		//RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
-		Vector2 min = field [indexX.FirstOrDefault(), indexY.FirstOrDefault()].tesseract.transform.position;
-		Vector2 max = field [indexX.LastOrDefault(), indexY.LastOrDefault()].tesseract.transform.position;
+		Vector2 min = field [indexX.FirstOrDefault()][indexY.FirstOrDefault()].tesseract.transform.position;
+		Vector2 max = field [indexX.LastOrDefault()][indexY.LastOrDefault()].tesseract.transform.position;
 
 		mousePos.x = Camera.main.ScreenToWorldPoint (Input.mousePosition).x - min.x;
-		mousePos.x = Mathf.Floor((mousePos.x / (max.x - min.x) * (fieldWidth - 1.0f)) + 0.5f);
+		mousePos.x = Mathf.Floor((mousePos.x / (max.x - min.x) * (fieldSize.x - 1.0f)) + 0.5f);
 		mousePos.y = Camera.main.ScreenToWorldPoint (Input.mousePosition).y - min.y;
-		mousePos.y = Mathf.Floor((mousePos.y / (max.y - min.y) * (fieldHeight - 1.0f)) + 0.5f);
+		mousePos.y = Mathf.Floor((mousePos.y / (max.y - min.y) * (fieldSize.y - 1.0f)) + 0.5f);
 
-		if(mousePos.x >= 0 && mousePos.x < fieldWidth && mousePos.y >= 0 && mousePos.y < fieldHeight)
+		if(mousePos.x >= 0 && mousePos.x < fieldSize.x && mousePos.y >= 0 && mousePos.y < fieldSize.y)
 			if(mousePos.x != lastPos.x || mousePos.y != lastPos.y)
-				field [indexX [(int)mousePos.x], indexY[(int)mousePos.y]].traveled ();
+				field [indexX [(int)mousePos.x]][indexY[(int)mousePos.y]].traveled ();
 
 		lastPos.x = mousePos.x + 0.0f;
 		lastPos.y = mousePos.y + 0.0f;
+
+		if (Input.GetKey (KeyCode.Q)) {
+			if (!additionMade) {
+				addRows(mousePos.y < 0 ? 0 : mousePos.y >= fieldSize.y ? -1 : (int)mousePos.y, 1);
+				additionMade = true;
+			}
+		} else if (Input.GetKey (KeyCode.W)) {
+			if (!additionMade) {
+				addColumns(mousePos.x < 0 ? 0 : mousePos.x >= fieldSize.x ? -1 : (int)mousePos.x, 1);
+				additionMade = true;
+			}
+		} else {
+			additionMade = false;
+		}
+
+		if (Input.GetKey (KeyCode.A)) {
+			addRows(mousePos.y < 0 ? 0 : mousePos.y >= fieldSize.y ? -1 : (int)mousePos.y, 1);
+		} else if (Input.GetKey (KeyCode.S)) {
+			addColumns(mousePos.x < 0 ? 0 : mousePos.x >= fieldSize.x ? -1 : (int)mousePos.x, 1);
+		}
 
 		if (Input.GetKey(KeyCode.Escape)) 
 		{

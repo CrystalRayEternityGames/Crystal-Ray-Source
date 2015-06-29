@@ -50,7 +50,7 @@ namespace AssemblyCSharp
 			int crystalTypes = Random.Range(0,100);
 			type = crystalTypes < 7 ? 0 : 1;
 			nameId = id;
-			
+
 			//Grants model manager
 			model = AssetManager.GetModels[0];//Resources.Load("Crystals/Prefabs/01_crystal") as GameObject;
 			//Do we have a GetTextures part for it?
@@ -67,11 +67,25 @@ namespace AssemblyCSharp
 			//rotationAngle = new Vector3(Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f);
 			rotationAngle = new Vector3(0.0f, 1.0f, 0.0f);
 
+			fixPosition (nPos, fieldDimensions);
+
+			tesseract.GetComponent<Renderer>().material.color = visitColors[type];
+			tesseract.transform.Rotate(new Vector3(-45.0f, 0.0f, 0.0f));
+		}
+		
+		public void traveled()
+		{
+			colorInt = (colorInt + 1) % visitColors.Length;
+			tesseract.GetComponent<Renderer>().material.color = visitColors[colorInt];
+		}
+
+		public void fixPosition(Vector2 pos, Vector2 fieldDimensions)
+		{
 			//Array positions
-			position = nPos;
-
+			position = pos;
+			
 			float multiplier = 1.0f;
-
+			
 			//Bad naming, visual location
 			Vector3 visualPosition = new Vector3 (0.0f, 0.0f, 10.0f * multiplier);
 			Vector3 positionOffset = new Vector3(position.x + 0.5f - (fieldDimensions.x / 2.0f),
@@ -83,18 +97,10 @@ namespace AssemblyCSharp
 			visualPosition += positionOffset;
 			//Since crystals are "tall" objects, width and depth will match
 			//Decisions and math to be made later if we want other creative shapes/ratios
-			scale = new Vector3(1.5f / fieldDimensions.x, 1.5f / fieldDimensions.y, 1.5f / fieldDimensions.x);
+			scale = new Vector3 (1.5f / fieldDimensions.x, 1.5f / fieldDimensions.y, 1.5f / fieldDimensions.x);
 			scale *= multiplier;
 			tesseract.transform.localPosition = visualPosition;
-			tesseract.transform.localScale = new Vector3(scale.x, scale.y, scale.z);
-			tesseract.GetComponent<Renderer>().material.color = visitColors[type];
-			tesseract.transform.Rotate(new Vector3(-45.0f, 0.0f, 0.0f));
-		}
-		
-		public void traveled()
-		{
-			colorInt = (colorInt + 1) % visitColors.Length;
-			tesseract.GetComponent<Renderer>().material.color = visitColors[colorInt];
+			tesseract.transform.localScale = scale;
 		}
 		
 		/// <summary>

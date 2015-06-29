@@ -12,8 +12,8 @@ public class endlessModeScript : gameMain
 	protected override void SetVariables ()
 	{
 		float timeDecrease = Random.Range (0.07f, 0.1f);
-		fieldHeight = 10;
-		fieldWidth = 10;
+		fieldSize.y = 10;
+		fieldSize.x = 10;
 		timer = Random.Range (0.5f - timeDecrease, 0.7f - timeDecrease);
 		base.SetVariables ();
 	}
