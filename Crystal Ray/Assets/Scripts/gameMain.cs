@@ -19,7 +19,7 @@ public class gameMain : MonoBehaviour
 	//Begin the ackwarding
 
 	//Columns then rows
-	public Dictionary<Guid, Dictionary<Guid, crystal>> field;
+	public Dictionary<guid2, crystal> field;
 	object fieldLock = new object ();
 	public List<Guid> indexX = new List<Guid>();
 	public List<Guid> indexY = new List<Guid>();
@@ -89,11 +89,9 @@ public class gameMain : MonoBehaviour
 
 					//Clear nulls
 					if (field == null)
-						field = new Dictionary<Guid, Dictionary<Guid, crystal>> ();
-					if (!field.ContainsKey (indexX [i]))
-						field [indexX [i]] = new Dictionary<Guid, crystal> ();
+						field = new Dictionary<guid2, crystal> (new guid2Comparer());
 					//Add the crystal
-					field [indexX [i]] [indexY [j]] = new crystal (pass.ToString (), new Vector2 (i, j), fieldSize, gameObject);
+					field [new guid2(indexX [i],indexY [j])] = new crystal (pass.ToString (), new Vector2 (i, j), fieldSize, gameObject);
 				}
 			}
 		
@@ -103,64 +101,109 @@ public class gameMain : MonoBehaviour
 		}
 	}
 
-	protected void addRows(int index = -1, int numb = 1)
+	//If x, make it a column, else make it a row
+	protected void addCrystals(bool x, int index = -1, int numb = 1)
 	{
 		lock (fieldLock) {
 			for(int i = 0; i < numb; i++)
 			{
 				Guid t = Guid.NewGuid();
-				while(indexY.Contains(t))
+				while((x && indexX.Contains(t)) || indexY.Contains(t))
 					t = Guid.NewGuid();
 				//Insert if index given
 				if(index >= 0)
 				{
-					indexY.Insert(index+i, t);
+					if(x)
+						indexX.Insert(index, t);
+					else
+						indexY.Insert(index, t);
 				}
 				//Otherwise add to the end
 				else
 				{
-					indexY.Add(t);
+					if(x)
+						indexX.Add(t);
+					else
+						indexY.Add(t);
 				}
-				fieldSize.y++;
-				field.Keys.ToList().ForEach(ind=>
-				                            field[ind][t] = new crystal("Newly made",
-				                                    new Vector2(indexX.IndexOf(ind),indexY.IndexOf(t)),
-				                                    fieldSize,
-				                                    gameObject));
+				if(x)
+					fieldSize.x++;
+				else
+					fieldSize.y++;
+
+				var newIndex = x ? indexX.IndexOf (t) : indexY.IndexOf (t);
+
+				var newItemsCount = x ? fieldSize.y : fieldSize.x;
+				for(int j = 0; j < newItemsCount; j++)
+				{
+					if(x)
+						field[new guid2(t, indexY[j])] = new crystal("Newly made", new Vector2(newIndex, j), fieldSize, gameObject);
+					else
+						field[new guid2(indexX[j], t)] = new crystal("Newly made", new Vector2(j,newIndex), fieldSize, gameObject);
+				}
 			}
 
-			foreach (var p in field)
-				foreach (var crys in p.Value)
-					crys.Value.fixPosition(new Vector2(indexX.IndexOf(p.Key), indexY.IndexOf(crys.Key)), fieldSize);
+			//Update what is on the field
+			foreach (var cell in field)
+				cell.Value.fixPosition(new Vector2(indexX.IndexOf(cell.Key.x), indexY.IndexOf(cell.Key.y)), fieldSize);
 		}
 	}
 
-	protected void addColumns(int index = -1, int numb = 1)
+	public void removeCrystals(bool x, int index = -1, int numb = 1)
 	{
 		lock (fieldLock) {
-			for(int i = 0; i < numb; i++)
-			{
-				Guid t = Guid.NewGuid();
-				while(indexX.Contains(t))
-					t = Guid.NewGuid();
-				//Insert if index given
+			//Cleanup time
+
+			for (int i = 0; i < numb; i++) {
+				if((x && !indexX.Any ()) || (!x && !indexY.Any ()))
+				   break;
+
+				var removeItemsCount = x ? fieldSize.y : fieldSize.x;
+				for(int j = 0; j < removeItemsCount; j++)
+				{
+					guid2 toRemove;
+					if(x)
+						toRemove = new guid2(indexX[index >= 0 ? (index >= indexX.Count ? indexX.Count-1 : index) : indexX.Count-1], indexY[j]);
+					else
+						toRemove = new guid2(indexX[j], indexY[index >= 0 ? (index >= indexY.Count ? indexY.Count-1 : index) : indexY.Count-1]);
+
+					Destroy(field[toRemove].tesseract);
+					field.Remove(toRemove);
+				}
+
 				if(index >= 0)
 				{
-					indexX.Insert(index+i, t);
+					if(x)
+						indexX.RemoveAt(index);
+					else
+						indexY.RemoveAt(index);
 				}
 				//Otherwise add to the end
 				else
 				{
-					indexX.Add(t);
+					if(x)
+						indexX.RemoveAt(indexX.Count-1);
+					else
+						indexY.RemoveAt(indexY.Count-1);
 				}
-				fieldSize.x++;
-				field[t] = new Dictionary<Guid, crystal>();
-				field[indexX[index > 0 ? 0 : 1]].Keys.ToList().ForEach(ind=>field[t][ind] = new crystal("Newly made", new Vector2(indexX.IndexOf(t),indexY.IndexOf(ind)), fieldSize, gameObject));
+				if(x)
+					fieldSize.x--;
+				else
+					fieldSize.y--;
 			}
-			
-			foreach (var p in field)
-				foreach (var crys in p.Value)
-					crys.Value.fixPosition(new Vector2(indexX.IndexOf(p.Key), indexY.IndexOf(crys.Key)), fieldSize);
+
+			//Update what is left on the field
+			foreach (var cell in field)
+				cell.Value.fixPosition(new Vector2(indexX.IndexOf(cell.Key.x), indexY.IndexOf(cell.Key.y)), fieldSize);
+		}
+	}
+
+	protected void removeRows(int index = -1, int numb = 1)
+	{
+		lock (fieldLock) {
+			for(int i = 0; i < numb; i++)
+			{
+			}
 		}
 	}
 	
@@ -182,8 +225,8 @@ public class gameMain : MonoBehaviour
 			int x = startSide % 2 == 0 ? startSide == 0 ? (int)fieldSize.x - 1 : 0 : startPoint;
 			int y = startSide % 2 == 0 ? startPoint : startSide == 1 ? 0 : (int)fieldSize.y - 1;
 			//Start the path on the correct point
-			if(field[indexX[x]][indexY[y]].type != 0)
-				generatedPath.Add(field[indexX[x]][indexY[y]]);
+			if(field[new guid2(indexX[x],indexY[y])].type != 0)
+				generatedPath.Add(field[new guid2(indexX[x],indexY[y])]);
 		}
 		
 		//Pick starting direction
@@ -191,7 +234,7 @@ public class gameMain : MonoBehaviour
 		int[] triedDirections = new int[] {0,0,0,0};
 		
 		//Start traveling
-		while(currentLevel > 0 && fieldSize.y > 1 && fieldSize.x > 1)
+		while(currentLevel > 0 && fieldSize.y > 1 && fieldSize.x > 1 && generatedPath.Any ())
 		{
 			bool good = true;
 			Vector2 currentPosition = generatedPath[generatedPath.Count-1].position;
@@ -225,7 +268,7 @@ public class gameMain : MonoBehaviour
 			//If no issues with picked direction, move forward, get new direction
 			if(good)
 			{
-				generatedPath.Add(field[indexX[(int)currentPosition.x]][indexY[(int)currentPosition.y]]);
+				generatedPath.Add(field[new guid2(indexX[(int)currentPosition.x],indexY[(int)currentPosition.y])]);
 				currentDirection = getDirection(currentDirection, triedDirections);
 				triedDirections = new int[] {0,0,0,0};
 				currentLevel--;
@@ -247,7 +290,7 @@ public class gameMain : MonoBehaviour
 			return false;
 		if ((int)posCheck.x >= fieldSize.x || (int)posCheck.y >= fieldSize.y)
 			return false;
-		if (field [indexX[(int)posCheck.x]][indexY[(int)posCheck.y]].type == 0)
+		if (field [new guid2(indexX[(int)posCheck.x],indexY[(int)posCheck.y])].type == 0)
 			return false;
 		return true;
 	}
@@ -380,39 +423,62 @@ public class gameMain : MonoBehaviour
 	/// </summary>
 	protected virtual void Update ()
 	{
-		scaleWidth = (float)Screen.width / (float)Screen.height * 0.8f; //0.8 is reverse of 5:4 ratio, 60f is camera default fieldofview
+		//scaleWidth = (float)Screen.width / (float)Screen.height * 0.8f; //0.8 is reverse of 5:4 ratio, 60f is camera default fieldofview
 		foreach (Camera cam in Camera.allCameras)
-						cam.aspect = 1;
+			cam.aspect = 1;
 
-		foreach (Dictionary<Guid, crystal> row in field.Values)
-			foreach (crystal crys in row.Values)
-				crys.Update ();
+		foreach (var cell in field)
+			cell.Value.Update ();
 
-		//RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+		if (Input.GetKey (KeyCode.Escape)) {
+			globalData.GetComponent<gameVariables> ().SaveScore ();
+			Application.LoadLevel ("mainMenu");
+			globalData.GetComponent<gameVariables> ().GetSetLevelsCompleted = 0;
+		}
 
-		Vector2 min = field [indexX.FirstOrDefault()][indexY.FirstOrDefault()].tesseract.transform.position;
-		Vector2 max = field [indexX.LastOrDefault()][indexY.LastOrDefault()].tesseract.transform.position;
+		mousePos.x = 0;
+		mousePos.y = 0;
+		lock (fieldLock) {
+			//Handle mouse stuff
+			if (field.Any () && indexX.Any () && indexY.Any ()) {
 
-		mousePos.x = Camera.main.ScreenToWorldPoint (Input.mousePosition).x - min.x;
-		mousePos.x = Mathf.Floor((mousePos.x / (max.x - min.x) * (fieldSize.x - 1.0f)) + 0.5f);
-		mousePos.y = Camera.main.ScreenToWorldPoint (Input.mousePosition).y - min.y;
-		mousePos.y = Mathf.Floor((mousePos.y / (max.y - min.y) * (fieldSize.y - 1.0f)) + 0.5f);
+				Vector2 min = field [new guid2 (indexX.FirstOrDefault (), indexY.FirstOrDefault ())].tesseract.transform.position;
+				Vector2 max = field [new guid2 (indexX.LastOrDefault (), indexY.LastOrDefault ())].tesseract.transform.position;
 
-		if(mousePos.x >= 0 && mousePos.x < fieldSize.x && mousePos.y >= 0 && mousePos.y < fieldSize.y)
-			if(mousePos.x != lastPos.x || mousePos.y != lastPos.y)
-				field [indexX [(int)mousePos.x]][indexY[(int)mousePos.y]].traveled ();
+				mousePos.x = Camera.main.ScreenToWorldPoint (Input.mousePosition).x - min.x;
+				mousePos.x = Mathf.Floor ((mousePos.x / (max.x - min.x) * (fieldSize.x - 1.0f)) + 0.5f);
+				mousePos.y = Camera.main.ScreenToWorldPoint (Input.mousePosition).y - min.y;
+				mousePos.y = Mathf.Floor ((mousePos.y / (max.y - min.y) * (fieldSize.y - 1.0f)) + 0.5f);
 
+				if (mousePos.x >= 0 && mousePos.x < fieldSize.x && mousePos.y >= 0 && mousePos.y < fieldSize.y)
+				if (mousePos.x != lastPos.x || mousePos.y != lastPos.y)
+					field [new guid2 (indexX [(int)mousePos.x], indexY [(int)mousePos.y])].traveled ();
+			}
+		}
 		lastPos.x = mousePos.x + 0.0f;
 		lastPos.y = mousePos.y + 0.0f;
 
+		var mX = mousePos.x < 0 ? 0 : mousePos.x >= fieldSize.x ? -1 : (int)mousePos.x;
+		var mY = mousePos.y < 0 ? 0 : mousePos.y >= fieldSize.y ? -1 : (int)mousePos.y;
+
 		if (Input.GetKey (KeyCode.Q)) {
 			if (!additionMade) {
-				addRows(mousePos.y < 0 ? 0 : mousePos.y >= fieldSize.y ? -1 : (int)mousePos.y, 1);
+				addCrystals (false, mY);
 				additionMade = true;
 			}
 		} else if (Input.GetKey (KeyCode.W)) {
 			if (!additionMade) {
-				addColumns(mousePos.x < 0 ? 0 : mousePos.x >= fieldSize.x ? -1 : (int)mousePos.x, 1);
+				addCrystals (true, mX);
+				additionMade = true;
+			}
+		} else if (Input.GetKey (KeyCode.O)) {
+			if (!additionMade) {
+				removeCrystals (false, mX);
+				additionMade = true;
+			}
+		} else if (Input.GetKey (KeyCode.P)) {
+			if (!additionMade) {
+				removeCrystals (true, mX);
 				additionMade = true;
 			}
 		} else {
@@ -420,16 +486,13 @@ public class gameMain : MonoBehaviour
 		}
 
 		if (Input.GetKey (KeyCode.A)) {
-			addRows(mousePos.y < 0 ? 0 : mousePos.y >= fieldSize.y ? -1 : (int)mousePos.y, 1);
+			addCrystals (false, mY);
 		} else if (Input.GetKey (KeyCode.S)) {
-			addColumns(mousePos.x < 0 ? 0 : mousePos.x >= fieldSize.x ? -1 : (int)mousePos.x, 1);
-		}
-
-		if (Input.GetKey(KeyCode.Escape)) 
-		{
-			globalData.GetComponent<gameVariables>().SaveScore();
-			Application.LoadLevel("mainMenu");
-			globalData.GetComponent<gameVariables>().GetSetLevelsCompleted = 0;
+			addCrystals (true, mX);
+		} else if (Input.GetKey (KeyCode.K)) {
+			removeCrystals (false, mX);
+		} else if (Input.GetKey (KeyCode.L)) {
+			removeCrystals (true, mX);
 		}
 	}
 	
@@ -492,6 +555,6 @@ public class gameMain : MonoBehaviour
 	{
 		get{return playing;}
 	}
-	
+
 	#endregion
 }

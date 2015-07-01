@@ -58,12 +58,6 @@
     <Reference Include="UnityEngine.Analytics">
       <HintPath>Library\UnityAssemblies\UnityEngine.Analytics.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
@@ -78,6 +72,7 @@
     <Compile Include="Assets\Scripts\gameMain.cs" />
     <Compile Include="Assets\Scripts\gameMainGUI.cs" />
     <Compile Include="Assets\Scripts\gameVariables.cs" />
+    <Compile Include="Assets\Scripts\guid2.cs" />
     <Compile Include="Assets\Scripts\leftArrow.cs" />
     <Compile Include="Assets\Scripts\mainMenu.cs" />
     <Compile Include="Assets\Scripts\popupBack.cs" />
