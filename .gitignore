@@ -1,2 +1,5 @@
 *metadata/
 *temp/
+*.log
+*.meta
+*.userprefs
