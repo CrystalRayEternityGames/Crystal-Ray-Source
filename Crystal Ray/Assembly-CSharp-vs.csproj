@@ -55,7 +55,6 @@
      <Compile Include="Assets\Scripts\gameMain.cs" />
      <Compile Include="Assets\Scripts\gameMainGUI.cs" />
      <Compile Include="Assets\Scripts\gameVariables.cs" />
-     <Compile Include="Assets\Scripts\guid2.cs" />
      <Compile Include="Assets\Scripts\leftArrow.cs" />
      <Compile Include="Assets\Scripts\mainMenu.cs" />
      <Compile Include="Assets\Scripts\popupBack.cs" />

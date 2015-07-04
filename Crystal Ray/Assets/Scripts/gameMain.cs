@@ -19,10 +19,9 @@ public class gameMain : MonoBehaviour
 	//Begin the ackwarding
 
 	//Columns then rows
-	public Dictionary<guid2, crystal> field;
+	public Dictionary<Guid[], crystal> field;
 	object fieldLock = new object ();
-	public List<Guid> indexX = new List<Guid>();
-	public List<Guid> indexY = new List<Guid>();
+	public List<List<Guid>> indexes = new List<List<Guid>>();
 	public Vector2 mousePos = new Vector2(-1f, -1f);
 	protected Vector2 lastPos = new Vector2 (-1f, -1f);
 	protected List<crystal> generatedPath = new List<crystal>();
@@ -76,9 +75,15 @@ public class gameMain : MonoBehaviour
 	protected void CreateField ()
 	{
 		lock (fieldLock) {
+			if(field == null)
+				field = new Dictionary<Guid[], crystal>(new guidComparer());
+
+			while(indexes.Count < 2)
+				indexes.Add (new List<Guid>());
+
 			//Clear the x and y indexes
-			indexReset (indexX, fieldSize.x);
-			indexReset (indexY, fieldSize.y);
+			indexReset (indexes[0], fieldSize.x);
+			indexReset (indexes[1], fieldSize.y);
 
 			//Create the grid
 			//Doing <= so we can use fieldWidth and such without -1
@@ -87,11 +92,8 @@ public class gameMain : MonoBehaviour
 					//Name
 					pass++;
 
-					//Clear nulls
-					if (field == null)
-						field = new Dictionary<guid2, crystal> (new guid2Comparer());
 					//Add the crystal
-					field [new guid2(indexX [i],indexY [j])] = new crystal (pass.ToString (), new Vector2 (i, j), fieldSize, gameObject);
+					field [new[] {indexes[0][i],indexes[1][j]}] = new crystal (pass.ToString (), new Vector2 (i, j), fieldSize, gameObject);
 				}
 			}
 		
@@ -102,107 +104,139 @@ public class gameMain : MonoBehaviour
 	}
 
 	//If x, make it a column, else make it a row
-	protected void addCrystals(bool x, int index = -1, int numb = 1)
+	protected void addCrystals(int axis, int index = -1, int numb = 1)
 	{
 		lock (fieldLock) {
 			for(int i = 0; i < numb; i++)
 			{
 				Guid t = Guid.NewGuid();
-				while((x && indexX.Contains(t)) || indexY.Contains(t))
+				while(indexes[axis].Contains(t))
 					t = Guid.NewGuid();
 				//Insert if index given
 				if(index >= 0)
 				{
-					if(x)
-						indexX.Insert(index, t);
-					else
-						indexY.Insert(index, t);
+					indexes[axis].Insert(index, t);
 				}
 				//Otherwise add to the end
 				else
 				{
-					if(x)
-						indexX.Add(t);
-					else
-						indexY.Add(t);
+					indexes[axis].Add(t);
 				}
-				if(x)
-					fieldSize.x++;
-				else
-					fieldSize.y++;
+				if(axis < 2)
+					fieldSize[axis]++;
 
-				var newIndex = x ? indexX.IndexOf (t) : indexY.IndexOf (t);
+				var newIndex = indexes[axis].IndexOf (t);
 
-				var newItemsCount = x ? fieldSize.y : fieldSize.x;
+				var newItemsCount = 0f;
+				if(axis == 0)
+					newItemsCount = fieldSize[1];
+				if(axis == 1)
+					newItemsCount = fieldSize[0];
+
 				for(int j = 0; j < newItemsCount; j++)
 				{
-					if(x)
-						field[new guid2(t, indexY[j])] = new crystal("Newly made", new Vector2(newIndex, j), fieldSize, gameObject);
-					else
-						field[new guid2(indexX[j], t)] = new crystal("Newly made", new Vector2(j,newIndex), fieldSize, gameObject);
+					Guid[] ind;
+					Vector2 vec;
+					switch(axis)
+					{
+					case 0:
+						ind = new[] {t, indexes[1][j]};
+						vec = new Vector2(newIndex, j);
+						break;
+					case 1:
+						ind = new[] {indexes[0][j], t};
+						vec = new Vector2(j, newIndex);
+						break;
+					default:
+						continue;
+					}
+
+					field[ind] = new crystal("N", vec, fieldSize, gameObject);
 				}
 			}
 
 			//Update what is on the field
 			foreach (var cell in field)
-				cell.Value.fixPosition(new Vector2(indexX.IndexOf(cell.Key.x), indexY.IndexOf(cell.Key.y)), fieldSize);
+				cell.Value.fixPosition(new Vector2(indexes[0].IndexOf(cell.Key[0]), indexes[1].IndexOf(cell.Key[1])), fieldSize);
 		}
 	}
 
-	public void removeCrystals(bool x, int index = -1, int numb = 1)
+	public void removeCrystals(int axis, int index = -1, int numb = 1)
 	{
 		lock (fieldLock) {
 			//Cleanup time
 
 			for (int i = 0; i < numb; i++) {
-				if((x && !indexX.Any ()) || (!x && !indexY.Any ()))
+				if(!indexes.All(ind=>ind.Any ()))
 				   break;
 
-				var removeItemsCount = x ? fieldSize.y : fieldSize.x;
+				//Removal minimum size
+				if(indexes[axis].Count() <= 1)
+					break;
+
+				var removeItemsCount = 0;
+				var debugCount = field.Count();
+				try
+				{
+				if(axis == 0)
+					removeItemsCount = (int)fieldSize[1];
+				if(axis == 1)
+					removeItemsCount = (int)fieldSize[0];
 				for(int j = 0; j < removeItemsCount; j++)
 				{
-					guid2 toRemove;
-					if(x)
-						toRemove = new guid2(indexX[index >= 0 ? (index >= indexX.Count ? indexX.Count-1 : index) : indexX.Count-1], indexY[j]);
-					else
-						toRemove = new guid2(indexX[j], indexY[index >= 0 ? (index >= indexY.Count ? indexY.Count-1 : index) : indexY.Count-1]);
+					//The index to find in the field dictionary
+					Guid[] toRemove;
+					if(axis == 0) //
+						toRemove = new[] {indexes[0][index >= 0 ? (index >= indexes[0].Count() ? indexes[0].Count()-1 : index) : indexes[0].Count-1], indexes[1][j]};
+					else// if(axis == 1)
+						toRemove = new[] {indexes[0][j], indexes[1][index >= 0 ? (index >= indexes[1].Count() ? indexes[1].Count-1 : index) : indexes[1].Count-1]};
 
 					Destroy(field[toRemove].tesseract);
 					field.Remove(toRemove);
 				}
+				}
+				catch
+				{
+					Debug.LogError(debugCount.ToString()+" minus "+removeItemsCount.ToString()+" should equal "+field.Count().ToString());
+				}
 
+				try
+				{
 				if(index >= 0)
 				{
-					if(x)
-						indexX.RemoveAt(index);
-					else
-						indexY.RemoveAt(index);
+					indexes[axis].RemoveAt(index);
 				}
 				//Otherwise add to the end
 				else
 				{
-					if(x)
-						indexX.RemoveAt(indexX.Count-1);
-					else
-						indexY.RemoveAt(indexY.Count-1);
+					indexes[axis].RemoveAt(indexes[axis].Count-1);
 				}
-				if(x)
-					fieldSize.x--;
-				else
-					fieldSize.y--;
+				}
+				catch
+				{
+					Debug.LogError("Failed to remove "+index.ToString()+" from indexes");
+				}
+
+				try
+				{
+					if(axis < 2)
+						fieldSize[axis]--;
+				}
+				catch
+				{
+					Debug.LogError("Failed to decrement fieldSize");
+				}
 			}
 
 			//Update what is left on the field
-			foreach (var cell in field)
-				cell.Value.fixPosition(new Vector2(indexX.IndexOf(cell.Key.x), indexY.IndexOf(cell.Key.y)), fieldSize);
-		}
-	}
-
-	protected void removeRows(int index = -1, int numb = 1)
-	{
-		lock (fieldLock) {
-			for(int i = 0; i < numb; i++)
+			try
 			{
+			foreach (var cell in field)
+				cell.Value.fixPosition(new Vector2(indexes[0].IndexOf(cell.Key[0]), indexes[1].IndexOf(cell.Key[1])), fieldSize);
+			}
+			catch
+			{
+				Debug.LogError("Failed to update something");
 			}
 		}
 	}
@@ -225,8 +259,8 @@ public class gameMain : MonoBehaviour
 			int x = startSide % 2 == 0 ? startSide == 0 ? (int)fieldSize.x - 1 : 0 : startPoint;
 			int y = startSide % 2 == 0 ? startPoint : startSide == 1 ? 0 : (int)fieldSize.y - 1;
 			//Start the path on the correct point
-			if(field[new guid2(indexX[x],indexY[y])].type != 0)
-				generatedPath.Add(field[new guid2(indexX[x],indexY[y])]);
+			if(field[new[] {indexes[0][x],indexes[1][y]}].type != 0)
+				generatedPath.Add(field[new[] {indexes[0][x],indexes[1][y]}]);
 		}
 		
 		//Pick starting direction
@@ -268,7 +302,7 @@ public class gameMain : MonoBehaviour
 			//If no issues with picked direction, move forward, get new direction
 			if(good)
 			{
-				generatedPath.Add(field[new guid2(indexX[(int)currentPosition.x],indexY[(int)currentPosition.y])]);
+				generatedPath.Add(field[new[] {indexes[0][(int)currentPosition.x],indexes[1][(int)currentPosition.y]}]);
 				currentDirection = getDirection(currentDirection, triedDirections);
 				triedDirections = new int[] {0,0,0,0};
 				currentLevel--;
@@ -290,7 +324,7 @@ public class gameMain : MonoBehaviour
 			return false;
 		if ((int)posCheck.x >= fieldSize.x || (int)posCheck.y >= fieldSize.y)
 			return false;
-		if (field [new guid2(indexX[(int)posCheck.x],indexY[(int)posCheck.y])].type == 0)
+		if (field [new[] {indexes[0][(int)posCheck.x],indexes[1][(int)posCheck.y]}].type == 0)
 			return false;
 		return true;
 	}
@@ -438,47 +472,56 @@ public class gameMain : MonoBehaviour
 
 		mousePos.x = 0;
 		mousePos.y = 0;
+		var mX = 0;
+		var mY = 0;
 		lock (fieldLock) {
 			//Handle mouse stuff
-			if (field.Any () && indexX.Any () && indexY.Any ()) {
+			if (field.Any () && indexes.All (ind => ind.Any ())) {
 
-				Vector2 min = field [new guid2 (indexX.FirstOrDefault (), indexY.FirstOrDefault ())].tesseract.transform.position;
-				Vector2 max = field [new guid2 (indexX.LastOrDefault (), indexY.LastOrDefault ())].tesseract.transform.position;
+				Vector2 min = field [new[] {indexes [0].FirstOrDefault (), indexes [1].FirstOrDefault ()}].tesseract.transform.position;
+				Vector2 max = field [new[] {indexes [0].LastOrDefault (), indexes [1].LastOrDefault ()}].tesseract.transform.position;
 
 				mousePos.x = Camera.main.ScreenToWorldPoint (Input.mousePosition).x - min.x;
-				mousePos.x = Mathf.Floor ((mousePos.x / (max.x - min.x) * (fieldSize.x - 1.0f)) + 0.5f);
+				if(max.x - min.x == 0f)
+					mousePos.x = 0;
+				else
+					mousePos.x = Mathf.Floor ((mousePos.x / (max.x - min.x) * (fieldSize.x - 1.0f)) + 0.5f);
 				mousePos.y = Camera.main.ScreenToWorldPoint (Input.mousePosition).y - min.y;
-				mousePos.y = Mathf.Floor ((mousePos.y / (max.y - min.y) * (fieldSize.y - 1.0f)) + 0.5f);
+				if(max.y - min.y == 0f)
+					mousePos.y = 0;
+				else
+					mousePos.y = Mathf.Floor ((mousePos.y / (max.y - min.y) * (fieldSize.y - 1.0f)) + 0.5f);
 
 				if (mousePos.x >= 0 && mousePos.x < fieldSize.x && mousePos.y >= 0 && mousePos.y < fieldSize.y)
 				if (mousePos.x != lastPos.x || mousePos.y != lastPos.y)
-					field [new guid2 (indexX [(int)mousePos.x], indexY [(int)mousePos.y])].traveled ();
+					field [new[] {indexes [0] [(int)mousePos.x], indexes [1] [(int)mousePos.y]}].traveled ();
 			}
-		}
-		lastPos.x = mousePos.x + 0.0f;
-		lastPos.y = mousePos.y + 0.0f;
+		
+			lastPos.x = mousePos.x + 0.0f;
+			lastPos.y = mousePos.y + 0.0f;
 
-		var mX = mousePos.x < 0 ? 0 : mousePos.x >= fieldSize.x ? -1 : (int)mousePos.x;
-		var mY = mousePos.y < 0 ? 0 : mousePos.y >= fieldSize.y ? -1 : (int)mousePos.y;
+			mX = mousePos.x < 0 ? 0 : (int)mousePos.x >= (int)fieldSize.x ? -1 : (int)mousePos.x;
+			mY = mousePos.y < 0 ? 0 : (int)mousePos.y >= (int)fieldSize.y ? -1 : (int)mousePos.y;
+		}
 
 		if (Input.GetKey (KeyCode.Q)) {
 			if (!additionMade) {
-				addCrystals (false, mY);
+				addCrystals (1, mY);
 				additionMade = true;
 			}
 		} else if (Input.GetKey (KeyCode.W)) {
 			if (!additionMade) {
-				addCrystals (true, mX);
+				addCrystals (0, mX);
 				additionMade = true;
 			}
 		} else if (Input.GetKey (KeyCode.O)) {
 			if (!additionMade) {
-				removeCrystals (false, mX);
+				removeCrystals (1, mX);
 				additionMade = true;
 			}
 		} else if (Input.GetKey (KeyCode.P)) {
 			if (!additionMade) {
-				removeCrystals (true, mX);
+				removeCrystals (0, mX);
 				additionMade = true;
 			}
 		} else {
@@ -486,13 +529,13 @@ public class gameMain : MonoBehaviour
 		}
 
 		if (Input.GetKey (KeyCode.A)) {
-			addCrystals (false, mY);
+			addCrystals (1, mY);
 		} else if (Input.GetKey (KeyCode.S)) {
-			addCrystals (true, mX);
+			addCrystals (0, mX);
 		} else if (Input.GetKey (KeyCode.K)) {
-			removeCrystals (false, mX);
+			removeCrystals (1, mY);
 		} else if (Input.GetKey (KeyCode.L)) {
-			removeCrystals (true, mX);
+			removeCrystals (0, mX);
 		}
 	}
 	
@@ -506,36 +549,41 @@ public class gameMain : MonoBehaviour
 	/// <returns>The texture.</returns>
 	protected IEnumerator ChangeTexture ()
 	{
-		/*   The temporary color thing for showing the path to the player
-		if(globalData.GetComponent<gameVariables>().GetSetLevelsCompleted < 3)
+		lock (fieldLock)
 		{
-			for(int i = 0; i < generatedPath.Count; i++)
+			/*   The temporary color thing for showing the path to the player
+			if(globalData.GetComponent<gameVariables>().GetSetLevelsCompleted < 3)
 			{
-				if(generatedPath[i].gameObject.renderer.material.color == globalData.GetComponent<gameVariables>().GetSetAIPathColor)
+				for(int i = 0; i < generatedPath.Count; i++)
 				{
-					generatedPath[i].gameObject.renderer.material.color = orange;
-				} else {
-					generatedPath[i].gameObject.renderer.material.color = globalData.GetComponent<gameVariables>().GetSetAIPathColor;
+					if(generatedPath[i].gameObject.renderer.material.color == globalData.GetComponent<gameVariables>().GetSetAIPathColor)
+					{
+						generatedPath[i].gameObject.renderer.material.color = orange;
+					} else {
+						generatedPath[i].gameObject.renderer.material.color = globalData.GetComponent<gameVariables>().GetSetAIPathColor;
+					}
+					yield return new WaitForSeconds(timer);
 				}
-				yield return new WaitForSeconds(timer);
-			}
-
-			for(int j = 0; j < generatedPath.Count; j++)
+	
+				for(int j = 0; j < generatedPath.Count; j++)
+				{
+					generatedPath[j].renderer.material.color = Color.cyan;
+				}
+			} else {*/
+			if(generatedPath.Any ())
 			{
-				generatedPath[j].renderer.material.color = Color.cyan;
+				for (int i = 0; i < generatedPath.Count; i++) {
+					Color tempColor = generatedPath [i].tesseract.GetComponent<Renderer> ().material.color;
+					generatedPath [i].tesseract.gameObject.GetComponent<Renderer> ().material.color = globalData.GetComponent<gameVariables> ().GetSetAIPathColor;
+					yield return new WaitForSeconds (timer);
+					generatedPath [i].tesseract.gameObject.GetComponent<Renderer> ().material.color = tempColor;
+				}
 			}
-		} else {*/
-		for(int i = 0; i < generatedPath.Count; i++)
-		{
-			Color tempColor = generatedPath[i].tesseract.GetComponent<Renderer>().material.color;
-			generatedPath[i].tesseract.gameObject.GetComponent<Renderer>().material.color = globalData.GetComponent<gameVariables>().GetSetAIPathColor;
-			yield return new WaitForSeconds(timer);
-			generatedPath[i].tesseract.gameObject.GetComponent<Renderer>().material.color = tempColor;
+			//}
+			
+			
+			ableToMove = true;
 		}
-		//}
-		
-		
-		ableToMove = true;
 	}
 
 	#endregion
@@ -557,4 +605,44 @@ public class gameMain : MonoBehaviour
 	}
 
 	#endregion
+}
+
+public class guidComparer : IEqualityComparer<Guid[]>
+{
+	public bool Equals(Guid[] t1, Guid[] t2)
+	{
+		try
+		{
+			//Either one null, don't bother trying
+			if(t1 == null || t2 == null)
+				return false;
+
+			//Count difference, done
+			if (t1.Count() != t2.Count())
+				return false;
+
+			for(int i = 0; i < t1.Count(); i++)
+			{
+				if(!t1[i].Equals(t2[i]))
+					return false;
+			}
+		}
+		catch
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	public int GetHashCode(Guid[] t1)
+	{
+		if(t1 == null)
+			return 0;
+		var result = t1[0].GetHashCode();
+		for (int i = 1; i < t1.Count(); i++)
+			result &= t1 [i].GetHashCode();
+
+		return result;
+	}
 }
