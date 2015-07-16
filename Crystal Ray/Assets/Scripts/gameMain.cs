@@ -486,6 +486,7 @@ public class gameMain : MonoBehaviour
 					mousePos.x = 0;
 				else
 					mousePos.x = Mathf.Floor ((mousePos.x / (max.x - min.x) * (fieldSize.x - 1.0f)) + 0.5f);
+
 				mousePos.y = Camera.main.ScreenToWorldPoint (Input.mousePosition).y - min.y;
 				if(max.y - min.y == 0f)
 					mousePos.y = 0;
@@ -526,6 +527,10 @@ public class gameMain : MonoBehaviour
 			}
 		} else {
 			additionMade = false;
+		}
+
+		if (Input.GetMouseButtonDown(0)) {
+			lastPos = new Vector2(-1, -1);
 		}
 
 		if (Input.GetKey (KeyCode.A)) {
