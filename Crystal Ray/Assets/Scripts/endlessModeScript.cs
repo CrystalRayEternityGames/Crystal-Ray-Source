@@ -2,87 +2,54 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts;
 
-public class endlessModeScript : gameMain
+namespace Assets.Scripts
 {
-    #region Fields
-    //private static endlessModeScript instance = null;
-    #endregion
-
-	protected override void SetVariables ()
-	{
-		float timeDecrease = Random.Range (0.07f, 0.1f);
-		fieldSize.y = 10;
-		fieldSize.x = 10;
-		timer = Random.Range (0.5f - timeDecrease, 0.7f - timeDecrease);
-		base.SetVariables ();
-	}
-
-    private void ClearColor()
+    public class EndlessModeScript : GameEngine
     {
-        for (int i = 0; i < generatedPath.Count - 1; i++)
+        #region Fields
+
+        //private static endlessModeScript instance = null;
+
+        #endregion
+
+        protected override void SetVariables()
         {
-            generatedPath[i].type = 0;
-            //generatedPath[i].renderer.material.color = Color.cyan;
-            Destroy(generatedPath[i].tesseract.GetComponent<ParticleSystem>());
+            base.SetVariables();
+			float timeDecrease = Random.Range(0.07f, 0.1f);
+			FieldSize.y = 10;
+			FieldSize.x = 10;
+			Timer = Random.Range(0.5f - timeDecrease, 0.7f - timeDecrease);
         }
 
-        playerPath.ForEach(crst => 
-        { 
-            
-            crst.type = 1;
-            //crst.renderer.material.color = Color.cyan;
-            Destroy(crst.tesseract.GetComponent<ParticleSystem>());
-        });
-
-        while (!generatePath())
+        private void ClearColor()
         {
-            continue;
-        }
-        StartCoroutine("ChangeTexture");
-    }
+            for (int i = 0; i < GeneratedPath.Count - 1; i++)
+            {
+                GeneratedPath[i].Type = 0;
+                //generatedPath[i].renderer.material.color = Color.cyan;
+                Object.Destroy(GeneratedPath[i].Tesseract.GetComponent<ParticleSystem>());
+            }
 
-    
-    /*public new static endlessModeScript Instance()
-    {
-        if (!instance)
+            PlayerPath.ForEach(crst =>
+            {
+
+                crst.Type = 1;
+                //crst.renderer.material.color = Color.cyan;
+                Object.Destroy(crst.Tesseract.GetComponent<ParticleSystem>());
+            });
+
+			GeneratePath ();
+        }
+
+        public void DoStart()
         {
-            instance = GameObject.FindObjectOfType(typeof(endlessModeScript)) as endlessModeScript;
+            Started = true;
         }
-        return instance;
-    }*/
 
-    
-
-    public void DoStart()
-    {
-        started = true;
-    }
-	
-    // Use this for initialization
-	protected override void Start ()
-    {
-	    //Score setting player pref
-        globalData = GameObject.FindGameObjectWithTag("Global");
-		//crystal = Resources.Load("Crystals/Prefabs/01_crystal") as GameObject;
-        SetVariables();
-        CreateField();
-        StartCoroutine("ChangeTexture");
-	}
-
-	// Update is called once per frame
-	protected override void Update ()
-	{
-		base.Update ();
-	}
-
-    public new bool GetAbleToMove
-    {
-        get { return ableToMove; }
-    }
-
-    public new bool GamePlaying
-    {
-        get { return playing;  }
+        public EndlessModeScript(gameMain parent, GameObject globals) : base(parent, globals)
+        {
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Collections;
 public class background : MonoBehaviour {
 	
 	GameObject plane = null;
-	GameObject globalData;
+	//GameObject globalData;
 
 	// Use this for initialization
 	void Start() 
@@ -12,7 +12,7 @@ public class background : MonoBehaviour {
 		float screenWidth = (float)Screen.width;
 		float screenHeight = (float)Screen.height;
 
-		globalData = GameObject.FindGameObjectWithTag("Global");
+		//globalData = GameObject.FindGameObjectWithTag("Global");
 
 		Texture backgroundImage = Resources.Load("Images/background")as Texture;
 		plane = GameObject.CreatePrimitive(PrimitiveType.Plane);

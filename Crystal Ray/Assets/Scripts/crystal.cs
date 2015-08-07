@@ -1,29 +1,27 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-namespace AssemblyCSharp
+namespace Assets.Scripts
 {
-	public class crystal
+	public class Crystal
 	{
 		//public crystal
 		//{
 		#region Fields
 		
-		GameObject globalData;
 		//bool pressed = false;
-		public Vector2 position;
-		public Vector3 scale;
-		public int type;
-		public int colorIndex = 0;
-		public Vector3 crystalRotation;
-		public string nameId;
-		public GameObject model;
-		public Material mat;
-		public GameObject tesseract;
-		public int colorInt = 1;
-		public Vector3 rotationAngle;
+		public Vector2 Position;
+		public Vector3 Scale;
+		public int Type;
+		public int ColorIndex = 0;
+		public Vector3 CrystalRotation;
+		public string NameId;
+		public GameObject Model;
+		public Material Mat;
+		public GameObject Tesseract;
+		public int ColorInt = 1;
+		public Vector3 RotationAngle;
 		//Colors
-		protected Color[] visitColors = new Color[] {
+		protected Color[] VisitColors = {
 			Color.gray, //Dark grey
 			Color.cyan, Color.green, Color.red, Color.magenta, Color.yellow,
 			Color.white, Color.blue, Color.black};
@@ -32,64 +30,56 @@ namespace AssemblyCSharp
 		
 		#region Private Methods
 		
-		/// <summary>
-		/// Start this instance.
-		/// </summary>
-		void Start()
-		{
-			globalData = GameObject.FindGameObjectWithTag("Global");
-			
-			//Want in, but need it to be changed.
-			crystalRotation = new Vector3(Random.Range (0.2f, 0.4f), Random.Range (0.1f, 0.3f), Random.Range (0.05f, 0.2f));
-			//type = 1;
-		}
-		
-		public crystal(string id, Vector2 nPos, Vector2 fieldDimensions, GameObject parent)
+		public Crystal(string id, Vector2 nPos, Vector2 fieldDimensions, gameMain parent)
 		{
 			//Type: 7% chance of being a void crystal, change later for smarter generation and conflict resolution?
-			int crystalTypes = Random.Range(0,100);
-			type = crystalTypes < 7 ? 0 : 1;
-			nameId = id;
+			var crystalTypes = Random.Range(0,100);
+			Type = crystalTypes < 7 ? 0 : 1;
+			NameId = id;
 
 			//Grants model manager
-			model = AssetManager.GetModels[0];//Resources.Load("Crystals/Prefabs/01_crystal") as GameObject;
+			Model = AssetManager.GetModels[0];//Resources.Load("Crystals/Prefabs/01_crystal") as GameObject;
 			//Do we have a GetTextures part for it?
-			mat = Resources.Load("Crystals/Materials/Crystal01-Grey", typeof(Material)) as Material;
+			Mat = Resources.Load("Crystals/Materials/Crystal01-Grey", typeof(Material)) as Material;
 
 			//Set get it ready for the world
-			model.GetComponent<Renderer>().material = mat;
-			tesseract = GameObject.Instantiate(model) as GameObject;
+			Model.GetComponent<Renderer>().material = Mat;
+
+            //Want in, but need it to be changed.
+            CrystalRotation = new Vector3(Random.Range(0.2f, 0.4f), Random.Range(0.1f, 0.3f), Random.Range(0.05f, 0.2f));
+
+            Tesseract = Object.Instantiate(Model);
 			//tesseract.transform.SetParent(Camera.current.transform);
-			tesseract.transform.SetParent (parent.transform);
-			tesseract.layer = parent.layer;
-			tesseract.name = "crystal:"+nameId;
+			Tesseract.transform.SetParent (parent.gameObject.transform);
+			Tesseract.layer = parent.gameObject.layer;
+			Tesseract.name = "crystal:"+NameId;
 
 			//rotationAngle = new Vector3(Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f);
-			rotationAngle = new Vector3(0.0f, 1.0f, 0.0f);
+			RotationAngle = new Vector3(0.0f, 1.0f, 0.0f);
 
-			fixPosition (nPos, fieldDimensions);
+			FixPosition (nPos, fieldDimensions);
 
-			tesseract.GetComponent<Renderer>().material.color = visitColors[type];
-			tesseract.transform.Rotate(new Vector3(-45.0f, 0.0f, 0.0f));
+			Tesseract.GetComponent<Renderer>().material.color = VisitColors[Type];
+			Tesseract.transform.Rotate(new Vector3(-45.0f, 0.0f, 0.0f));
 		}
 		
-		public void traveled()
+		public void Traveled()
 		{
-			colorInt = (colorInt + 1) % visitColors.Length;
-			tesseract.GetComponent<Renderer>().material.color = visitColors[colorInt];
+			ColorInt = (ColorInt + 1) % VisitColors.Length;
+			Tesseract.GetComponent<Renderer>().material.color = VisitColors[ColorInt];
 		}
 
-		public void fixPosition(Vector2 pos, Vector2 fieldDimensions)
+		public void FixPosition(Vector2 pos, Vector2 fieldDimensions)
 		{
 			//Array positions
-			position = pos;
+			Position = pos;
 			
-			float multiplier = 1.0f;
+			const float multiplier = 1.0f;
 			
 			//Bad naming, visual location
-			Vector3 visualPosition = new Vector3 (0.0f, 0.0f, 10.0f * multiplier);
-			Vector3 positionOffset = new Vector3(position.x + 0.5f - (fieldDimensions.x / 2.0f),
-			                                     position.y + 0.5f - (fieldDimensions.y / 2.0f),
+			var visualPosition = new Vector3 (0.0f, 0.0f, 10.0f * multiplier);
+			var positionOffset = new Vector3(Position.x + 0.5f - (fieldDimensions.x / 2.0f),
+			                                     Position.y + 0.5f - (fieldDimensions.y / 2.0f),
 			                                     0.0f);
 			positionOffset.x *= 8.0f / fieldDimensions.x * multiplier;
 			positionOffset.y *= 11.0f / fieldDimensions.y * multiplier;
@@ -97,10 +87,10 @@ namespace AssemblyCSharp
 			visualPosition += positionOffset;
 			//Since crystals are "tall" objects, width and depth will match
 			//Decisions and math to be made later if we want other creative shapes/ratios
-			scale = new Vector3 (1.5f / fieldDimensions.x, 1.5f / fieldDimensions.y, 1.5f / fieldDimensions.x);
-			scale *= multiplier;
-			tesseract.transform.localPosition = visualPosition;
-			tesseract.transform.localScale = scale;
+			Scale = new Vector3 (1.5f / fieldDimensions.x, 1.5f / fieldDimensions.y, 1.5f / fieldDimensions.x);
+			Scale *= multiplier;
+			Tesseract.transform.localPosition = visualPosition;
+			Tesseract.transform.localScale = Scale;
 		}
 		
 		/// <summary>
@@ -135,7 +125,7 @@ namespace AssemblyCSharp
 		/// </summary>
 		public void Update () 
 		{
-			tesseract.transform.Rotate(rotationAngle * Time.deltaTime * 30.0f);
+			Tesseract.transform.Rotate(RotationAngle * Time.deltaTime * 30.0f);
 			
 			/*if(Input.GetMouseButtonDown(0))
 			{
