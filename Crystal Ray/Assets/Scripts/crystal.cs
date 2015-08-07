@@ -135,14 +135,8 @@ namespace AssemblyCSharp
 		/// </summary>
 		public void Update () 
 		{
-			//Todo: Draw the tesseract
-
-			//tesseract.transform.Rotate(new Vector3(Random.Range(0.0f,1.0f)-0.5f, Random.Range(0.0f,1.0f)-0.5f, Random.Range(0.0f,1.0f)-0.5f) * Time.deltaTime * 40.0f);
-
-
-
 			tesseract.transform.Rotate(rotationAngle * Time.deltaTime * 30.0f);
-
+			
 			/*if(Input.GetMouseButtonDown(0))
 			{
 				pressed = true;

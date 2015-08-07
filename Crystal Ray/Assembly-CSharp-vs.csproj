@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\EventManager.cs" />
      <Compile Include="Assets\Scripts\MusicPlayer.cs" />
      <Compile Include="Assets\Scripts\background.cs" />
+     <Compile Include="Assets\Scripts\cameraShinanigans.cs" />
      <Compile Include="Assets\Scripts\crystal.cs" />
      <Compile Include="Assets\Scripts\endlessModeScript.cs" />
      <Compile Include="Assets\Scripts\gameMain.cs" />

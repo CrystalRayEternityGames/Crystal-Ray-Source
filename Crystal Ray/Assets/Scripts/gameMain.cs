@@ -43,6 +43,7 @@ public class gameMain : MonoBehaviour
 	protected int pass = 0;
 	protected int crystalCount = 0;
 	protected float timer = 1.0f;
+	protected float theZEffect = 0.0f;
 	
 	protected bool ableToMove = false;
 	protected bool playing = true;
@@ -56,7 +57,7 @@ public class gameMain : MonoBehaviour
 	private void indexReset(List<Guid> index, float fSize)
 	{
 		index.Clear();
-		for(int i = 0; i < fSize; i++)
+		for(int i = 0; i < (int)fSize; i++)
 		{
 			Guid t = Guid.NewGuid();
 			while(index.Contains(t))
