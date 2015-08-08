@@ -51,5 +51,11 @@ namespace Assets.Scripts
         public EndlessModeScript(gameMain parent, GameObject globals) : base(parent, globals)
         {
         }
+
+		public override void Update ()
+		{
+			base.Update ();
+			Field.ToList ().ForEach (kvp => kvp.Value.Traveled ());
+		}
     }
 }

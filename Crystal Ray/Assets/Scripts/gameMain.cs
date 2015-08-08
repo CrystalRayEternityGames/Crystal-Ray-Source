@@ -13,7 +13,7 @@ public class gameMain : MonoBehaviour
 
     public GameEngine TheGameEngine;
 	public enum GameMode {Standard, Arcade};
-	public GameMode CurrenMode = GameMode.Standard;
+	public GameMode CurrentMode = GameMode.Standard;
 
 	//public Font gameFont;
 	//public Material textMaterial;
@@ -49,12 +49,14 @@ public class gameMain : MonoBehaviour
 
 	protected void GetLevel()
 	{
-		switch (CurrenMode) {
+		switch (CurrentMode) {
 		case GameMode.Standard:
-			TheGameEngine = new GameEngine(this, GlobalData);
+			TheGameEngine = new GameEngine (this, GlobalData);
+			CurrentMode = GameMode.Arcade;
 			break;
 		case GameMode.Arcade:
-			TheGameEngine = new EndlessModeScript(this, GlobalData);
+			TheGameEngine = new EndlessModeScript (this, GlobalData);
+			CurrentMode = GameMode.Standard;
 			break;
 		}
 	}
