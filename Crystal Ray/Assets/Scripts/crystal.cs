@@ -26,9 +26,10 @@ namespace Assets.Scripts
 			Color.cyan, Color.green, Color.red, Color.magenta, Color.yellow,
 			Color.white, Color.blue, Color.black};
 			//new Color(255,165,0)}; //Orange
+		protected object CrystalLock = new object();
 		#endregion
 		
-		#region Private Methods
+		#region Methods
 		
 		public Crystal(string id, Vector2 nPos, Vector2 fieldDimensions, gameMain parent)
 		{
@@ -48,19 +49,21 @@ namespace Assets.Scripts
             //Want in, but need it to be changed.
             CrystalRotation = new Vector3(Random.Range(0.2f, 0.4f), Random.Range(0.1f, 0.3f), Random.Range(0.05f, 0.2f));
 
-            Tesseract = Object.Instantiate(Model);
-			//tesseract.transform.SetParent(Camera.current.transform);
-			Tesseract.transform.SetParent (parent.gameObject.transform);
-			Tesseract.layer = parent.gameObject.layer;
-			Tesseract.name = "crystal:"+NameId;
+			lock (CrystalLock) {
+				Tesseract = Object.Instantiate (Model);
+				//tesseract.transform.SetParent(Camera.current.transform);
+				Tesseract.transform.SetParent (parent.gameObject.transform);
+				Tesseract.layer = parent.gameObject.layer;
+				Tesseract.name = "crystal:" + NameId;
 
-			//rotationAngle = new Vector3(Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f);
-			RotationAngle = new Vector3(0.0f, 1.0f, 0.0f);
+				//rotationAngle = new Vector3(Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f, Random.Range(0.5f,2.0f)-1.0f);
+				RotationAngle = new Vector3 (0.0f, 1.0f, 0.0f);
 
-			FixPosition (nPos, fieldDimensions);
+				FixPosition (nPos, fieldDimensions);
 
-			Tesseract.GetComponent<Renderer>().material.color = VisitColors[Type];
-			Tesseract.transform.Rotate(new Vector3(-45.0f, 0.0f, 0.0f));
+				Tesseract.GetComponent<Renderer> ().material.color = VisitColors [Type];
+				Tesseract.transform.Rotate (new Vector3 (-45.0f, 0.0f, 0.0f));
+			}
 		}
 		
 		public void Traveled()
@@ -89,8 +92,10 @@ namespace Assets.Scripts
 			//Decisions and math to be made later if we want other creative shapes/ratios
 			Scale = new Vector3 (1.5f / fieldDimensions.x, 1.5f / fieldDimensions.y, 1.5f / fieldDimensions.x);
 			Scale *= multiplier;
-			Tesseract.transform.localPosition = visualPosition;
-			Tesseract.transform.localScale = Scale;
+			lock (CrystalLock) {
+				Tesseract.transform.localPosition = visualPosition;
+				Tesseract.transform.localScale = Scale;
+			}
 		}
 		
 		/// <summary>
@@ -125,7 +130,14 @@ namespace Assets.Scripts
 		/// </summary>
 		public void Update () 
 		{
-			Tesseract.transform.Rotate(RotationAngle * Time.deltaTime * 30.0f);
+			lock (CrystalLock) {
+				if(Tesseract != null)
+				{
+					Tesseract.transform.Rotate (RotationAngle * Time.deltaTime * 30.0f);
+
+					//Traveled();
+				}
+			}
 			
 			/*if(Input.GetMouseButtonDown(0))
 			{
@@ -136,6 +148,14 @@ namespace Assets.Scripts
 				pressed = false;
 			}*/
 			//transform.Rotate(crystalRotation);
+		}
+
+		public void DestroyCrystal()
+		{
+			lock (CrystalLock) {
+				Object.Destroy (Tesseract);
+				Tesseract = null;
+			}
 		}
 		
 		#endregion
